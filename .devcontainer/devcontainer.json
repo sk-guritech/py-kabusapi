@@ -1,0 +1,36 @@
+{
+    "name": "py-kabusapi",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "charliermarsh.ruff",
+                "ms-python.vscode-pylance",
+                "ms-python.python",
+                "GitHub.vscode-pull-request-github",
+                "mhutchie.git-graph",
+                "ms-vscode-remote.remote-containers",
+                "oderwat.indent-rainbow",
+                "shardulm94.trailing-spaces",
+                "usernamehw.errorlens",
+                "ms-python.debugpy"
+            ],
+            "settings": {
+                "[python]": {
+                    "editor.defaultFormatter": "charliermarsh.ruff",
+                    "editor.formatOnSave": true,
+                    "editor.codeActionsOnSave": {
+                        "source.fixAll.ruff": "explicit",
+                        "source.organizeImports": "explicit"
+                    }
+                },
+                "python.analysis.inlayHints.functionReturnTypes": true,
+                "python.analysis.inlayHints.variableTypes": true,
+                "python.analysis.inlayHints.callArgumentNames": "all",
+                "python.terminal.activateEnvironment": true
+            }
+        }
+    }
+}
