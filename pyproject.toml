@@ -1,0 +1,19 @@
+[project]
+name = "py-kabusapi"
+version = "0.0.0"
+description = ""
+authors = []
+readme = "README.md"
+requires-python = "==3.12"
+
+dependencies = [
+    "requests",
+    "ipython",
+    "ruff"
+]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["I", "N", "F401"]
