@@ -125,7 +125,7 @@ class KabuStationAPI:
 
         return response_json
 
-    def get_wallet_cash_by_symbol(self, symbol: str) -> dict:
+    def wallet_cash_by_symbol(self, symbol: str) -> dict:
         """
         指定した銘柄の現物買付可能額を取得します。
 
@@ -141,7 +141,7 @@ class KabuStationAPI:
         response_json = self.call_api(f"wallet/cash/{symbol}", ApiCategory.TRADING_CAPACITY, "GET")
         return response_json
 
-    def get_wallet_margin(self) -> dict:
+    def wallet_margin(self) -> dict:
         """
         信用新規可能額を取得します。
 
@@ -155,7 +155,7 @@ class KabuStationAPI:
         response_json = self.call_api("wallet/margin", ApiCategory.TRADING_CAPACITY, "GET")
         return response_json
 
-    def get_wallet_margin_by_symbol(self, symbol: str) -> dict:
+    def wallet_margin_by_symbol(self, symbol: str) -> dict:
         """
         指定した銘柄の信用新規可能額を取得します。
 
@@ -172,7 +172,7 @@ class KabuStationAPI:
         response_json = self.call_api(f"wallet/margin/{symbol}", ApiCategory.TRADING_CAPACITY, "GET")
         return response_json
 
-    def get_wallet_future(self) -> dict:
+    def wallet_future(self) -> dict:
         """
         先物新規建玉可能額を取得します。
 
@@ -185,7 +185,7 @@ class KabuStationAPI:
         response_json = self.call_api("wallet/future", ApiCategory.TRADING_CAPACITY, "GET")
         return response_json
 
-    def get_wallet_future_by_symbol(self, symbol: str) -> dict:
+    def wallet_future_by_symbol(self, symbol: str) -> dict:
         """
         指定した銘柄の先物新規建玉可能額を取得します。
 
@@ -201,7 +201,7 @@ class KabuStationAPI:
         response_json = self.call_api(f"wallet/future/{symbol}", ApiCategory.TRADING_CAPACITY, "GET")
         return response_json
 
-    def get_wallet_option(self) -> dict:
+    def wallet_option(self) -> dict:
         """
         オプション新規建玉可能額を取得します。
 
@@ -214,7 +214,7 @@ class KabuStationAPI:
         response_json = self.call_api("wallet/option", ApiCategory.TRADING_CAPACITY, "GET")
         return response_json
 
-    def get_wallet_option_by_symbol(self, symbol: str) -> dict:
+    def wallet_option_by_symbol(self, symbol: str) -> dict:
         """
         指定した銘柄のオプション新規建玉可能額を取得します。
 
@@ -230,7 +230,7 @@ class KabuStationAPI:
         response_json = self.call_api(f"wallet/option/{symbol}", ApiCategory.TRADING_CAPACITY, "GET")
         return response_json
 
-    def get_board_by_symbol(self, symbol: str) -> dict:
+    def board_by_symbol(self, symbol: str) -> dict:
         """
         指定した銘柄の板情報を取得します。
 
@@ -350,7 +350,7 @@ class KabuStationAPI:
         response_json = self.call_api(f"board/{symbol}", ApiCategory.INFORMATION, "GET")
         return response_json
 
-    def get_symbol_by_symbol(self, symbol: str) -> dict:
+    def symbol_by_symbol(self, symbol: str) -> dict:
         """
         指定した銘柄の詳細情報を取得します。
 
@@ -387,7 +387,7 @@ class KabuStationAPI:
         response_json = self.call_api(f"symbol/{symbol}", ApiCategory.INFORMATION, "GET")
         return response_json
 
-    def get_orders(self) -> dict:
+    def orders(self) -> dict:
         """
         注文一覧を取得します。
 
@@ -397,7 +397,7 @@ class KabuStationAPI:
         response_json = self.call_api("orders", ApiCategory.INFORMATION, "GET")
         return response_json
 
-    def get_positions(self) -> dict:
+    def positions(self) -> dict:
         """
         建玉一覧を取得します。
 
@@ -407,7 +407,7 @@ class KabuStationAPI:
         response_json = self.call_api("positions", ApiCategory.INFORMATION, "GET")
         return response_json
 
-    def get_symbolname_future(self) -> dict:
+    def symbolname_future(self) -> dict:
         """
         先物銘柄コードから銘柄名称を取得します。
 
@@ -419,7 +419,7 @@ class KabuStationAPI:
         response_json = self.call_api("symbolname/future", ApiCategory.INFORMATION, "GET")
         return response_json
 
-    def get_symbolname_option(self) -> dict:
+    def symbolname_option(self) -> dict:
         """
         オプション銘柄コードから銘柄名称を取得します。
 
@@ -431,7 +431,7 @@ class KabuStationAPI:
         response_json = self.call_api("symbolname/option", ApiCategory.INFORMATION, "GET")
         return response_json
 
-    def get_symbolname_minioptionweekly(self) -> dict:
+    def symbolname_minioptionweekly(self) -> dict:
         """
         ミニオプション（週次）銘柄コードから銘柄名称を取得します。
 
@@ -443,7 +443,7 @@ class KabuStationAPI:
         response_json = self.call_api("symbolname/minioptionweekly", ApiCategory.INFORMATION, "GET")
         return response_json
 
-    def get_ranking(self) -> dict:
+    def ranking(self) -> dict:
         """
         ランキング情報を取得します。
 
@@ -453,7 +453,7 @@ class KabuStationAPI:
         response_json = self.call_api("ranking", ApiCategory.INFORMATION, "GET")
         return response_json
 
-    def get_exchange_by_symbol(self, symbol: str) -> dict:
+    def exchange_by_symbol(self, symbol: str) -> dict:
         """
         為替レート情報を取得します。
 
@@ -472,7 +472,7 @@ class KabuStationAPI:
         response_json = self.call_api(f"exchange/{symbol}", ApiCategory.INFORMATION, "GET")
         return response_json
 
-    def get_regulations_by_symbol(self, symbol: str) -> dict:
+    def regulations_by_symbol(self, symbol: str) -> dict:
         """
         指定した銘柄の規制情報を取得します。
 
@@ -494,7 +494,7 @@ class KabuStationAPI:
         response_json = self.call_api(f"regulations/{symbol}", ApiCategory.INFORMATION, "GET")
         return response_json
 
-    def get_primaryexchange_by_symbol(self, symbol: str) -> dict:
+    def primaryexchange_by_symbol(self, symbol: str) -> dict:
         """
         指定した銘柄の優先市場を取得します。
 
@@ -509,7 +509,7 @@ class KabuStationAPI:
         response_json = self.call_api(f"primaryexchange/{symbol}", ApiCategory.INFORMATION, "GET")
         return response_json
 
-    def get_apisoftlimit(self) -> dict:
+    def apisoftlimit(self) -> dict:
         """
         APIのワンショット上限値を取得します。
 
@@ -527,7 +527,7 @@ class KabuStationAPI:
         response_json = self.call_api("apisoftlimit", ApiCategory.INFORMATION, "GET")
         return response_json
 
-    def get_margin_marginpremium_by_symbol(self, symbol: str) -> dict:
+    def margin_marginpremium_by_symbol(self, symbol: str) -> dict:
         """
         指定した銘柄のプレミアム料情報を取得します。
 
@@ -553,7 +553,7 @@ class KabuStationAPI:
         response_json = self.call_api(f"margin/marginpremium/{symbol}", ApiCategory.INFORMATION, "GET")
         return response_json
 
-    def post_sendorder(
+    def sendorder(
         self,
         symbol: str,
         exchange: int,
@@ -693,7 +693,7 @@ class KabuStationAPI:
         response_json = self.call_api("sendorder", ApiCategory.ORDER_PLACEMENT, "POST", payload)
         return response_json
 
-    def post_sendorder_future(
+    def sendorder_future(
         self,
         symbol: str,
         exchange: int,
@@ -788,7 +788,7 @@ class KabuStationAPI:
         response_json = self.call_api("sendorder/future", ApiCategory.ORDER_PLACEMENT, "POST", payload)
         return response_json
 
-    def post_sendorder_option(
+    def sendorder_option(
         self,
         symbol: str,
         exchange: int,
@@ -880,7 +880,7 @@ class KabuStationAPI:
         response_json = self.call_api("sendorder/option", ApiCategory.ORDER_PLACEMENT, "POST", payload)
         return response_json
 
-    def put_cancelorder(self, order_id: str) -> dict:
+    def cancelorder(self, order_id: str) -> dict:
         """
         注文をキャンセルします。
 
