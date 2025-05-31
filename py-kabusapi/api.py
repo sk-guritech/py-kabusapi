@@ -124,3 +124,285 @@ class KabuStationAPI:
         response_json = self.call_api("wallet/cash", ApiCategory.TRADING_CAPACITY, "GET")
 
         return response_json
+
+    def get_wallet_cash_by_symbol(self, symbol: str) -> dict:
+        """
+        指定した銘柄の現物買付可能額を取得します。
+
+        Args:
+            symbol (str): 銘柄コード。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - StockAccountWallet (float): 現物買付可能額。
+                - AuKCStockAccountWallet (float): うち、三菱UFJ eスマート証券可能額。
+                - AuJbnStockAccountWallet (float): うち、auじぶん銀行残高。
+        """
+        response_json = self.call_api(f"wallet/cash/{symbol}", ApiCategory.TRADING_CAPACITY, "GET")
+        return response_json
+
+    def get_wallet_margin(self) -> dict:
+        """
+        信用新規可能額を取得します。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - MarginAccountWallet (float): 信用新規可能額。
+                - DepositkeepRate (float): 保証金維持率。銘柄指定の場合のみ。
+                - ConsignmentDepositRate (float): 委託保証金率。銘柄指定の場合のみ。
+                - CashOfConsignmentDepositRate (float): 現金委託保証金率。銘柄指定の場合のみ。
+        """
+        response_json = self.call_api("wallet/margin", ApiCategory.TRADING_CAPACITY, "GET")
+        return response_json
+
+    def get_wallet_margin_by_symbol(self, symbol: str) -> dict:
+        """
+        指定した銘柄の信用新規可能額を取得します。
+
+        Args:
+            symbol (str): 銘柄コード。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - MarginAccountWallet (float): 信用新規可能額。
+                - DepositkeepRate (float): 保証金維持率。
+                - ConsignmentDepositRate (float): 委託保証金率。
+                - CashOfConsignmentDepositRate (float): 現金委託保証金率。
+        """
+        response_json = self.call_api(f"wallet/margin/{symbol}", ApiCategory.TRADING_CAPACITY, "GET")
+        return response_json
+
+    def get_wallet_future(self) -> dict:
+        """
+        先物新規建玉可能額を取得します。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - FutureTradeLimit (float): 新規建玉可能額。
+                - MarginRequirement (float): 買い必要証拠金額。銘柄指定の場合のみ。
+                - MarginRequirementSell (float): 売り必要証拠金額。銘柄指定の場合のみ。
+        """
+        response_json = self.call_api("wallet/future", ApiCategory.TRADING_CAPACITY, "GET")
+        return response_json
+
+    def get_wallet_future_by_symbol(self, symbol: str) -> dict:
+        """
+        指定した銘柄の先物新規建玉可能額を取得します。
+
+        Args:
+            symbol (str): 銘柄コード。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - FutureTradeLimit (float): 新規建玉可能額。
+                - MarginRequirement (float): 買い必要証拠金額。
+                - MarginRequirementSell (float): 売り必要証拠金額。
+        """
+        response_json = self.call_api(f"wallet/future/{symbol}", ApiCategory.TRADING_CAPACITY, "GET")
+        return response_json
+
+    def get_wallet_option(self) -> dict:
+        """
+        オプション新規建玉可能額を取得します。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - OptionBuyTradeLimit (float): 買新規建玉可能額。
+                - OptionSellTradeLimit (float): 売新規建玉可能額。
+                - MarginRequirement (float): 必要証拠金額。銘柄指定の場合のみ。
+        """
+        response_json = self.call_api("wallet/option", ApiCategory.TRADING_CAPACITY, "GET")
+        return response_json
+
+    def get_wallet_option_by_symbol(self, symbol: str) -> dict:
+        """
+        指定した銘柄のオプション新規建玉可能額を取得します。
+
+        Args:
+            symbol (str): 銘柄コード。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - OptionBuyTradeLimit (float): 買新規建玉可能額。
+                - OptionSellTradeLimit (float): 売新規建玉可能額。
+                - MarginRequirement (float): 必要証拠金額。
+        """
+        response_json = self.call_api(f"wallet/option/{symbol}", ApiCategory.TRADING_CAPACITY, "GET")
+        return response_json
+
+    def get_board_by_symbol(self, symbol: str) -> dict:
+        """
+        指定した銘柄の板情報を取得します。
+
+        Args:
+            symbol (str): 銘柄コード。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - Symbol (str): 銘柄コード。
+                - SymbolName (str): 銘柄名。
+                - Exchange (int): 市場コード。
+                - ExchangeName (str): 市場名称。
+                - CurrentPrice (float): 現値。
+                - CurrentPriceTime (str): 現値時刻。
+                - CurrentPriceChangeStatus (str): 現値前値比較。
+                - CurrentPriceStatus (int): 現値ステータス。
+                - CalcPrice (float): 計算用現値。
+                - PreviousClose (float): 前日終値。
+                - PreviousCloseTime (str): 前日終値日付。
+                - ChangePreviousClose (float): 前日比。
+                - ChangePreviousClosePer (float): 騰落率。
+                - OpeningPrice (float): 始値。
+                - OpeningPriceTime (str): 始値時刻。
+                - HighPrice (float): 高値。
+                - HighPriceTime (str): 高値時刻。
+                - LowPrice (float): 安値。
+                - LowPriceTime (str): 安値時刻。
+                - TradingVolume (float): 売買高。
+                - TradingVolumeTime (str): 売買高時刻。
+                - VWAP (float): 売買高加重平均価格（VWAP）。
+                - TradingValue (float): 売買代金。
+                - BidQty (float): 最良売気配数量。
+                - BidPrice (float): 最良売気配値段。
+                - BidTime (str): 最良売気配時刻。
+                - BidSign (str): 最良売気配フラグ。
+                - MarketOrderSellQty (float): 売成行数量。
+                - Sell1 (dict): 売気配数量1本目。
+                    - Time (str): 時刻。
+                    - Sign (str): 気配フラグ。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Sell2 (dict): 売気配数量2本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Sell3 (dict): 売気配数量3本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Sell4 (dict): 売気配数量4本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Sell5 (dict): 売気配数量5本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Sell6 (dict): 売気配数量6本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Sell7 (dict): 売気配数量7本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Sell8 (dict): 売気配数量8本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Sell9 (dict): 売気配数量9本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Sell10 (dict): 売気配数量10本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - AskQty (float): 最良買気配数量。
+                - AskPrice (float): 最良買気配値段。
+                - AskTime (str): 最良買気配時刻。
+                - AskSign (str): 最良買気配フラグ。
+                - MarketOrderBuyQty (float): 買成行数量。
+                - Buy1 (dict): 買気配数量1本目。
+                    - Time (str): 時刻。
+                    - Sign (str): 気配フラグ。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Buy2 (dict): 買気配数量2本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Buy3 (dict): 買気配数量3本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Buy4 (dict): 買気配数量4本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Buy5 (dict): 買気配数量5本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Buy6 (dict): 買気配数量6本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Buy7 (dict): 買気配数量7本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Buy8 (dict): 買気配数量8本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Buy9 (dict): 買気配数量9本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - Buy10 (dict): 買気配数量10本目。
+                    - Price (float): 値段。
+                    - Qty (float): 数量。
+                - OverSellQty (float): OVER気配数量。
+                - UnderBuyQty (float): UNDER気配数量。
+                - TotalMarketValue (float): 時価総額。
+                - ClearingPrice (float): 清算値。
+                - IV (float): インプライド・ボラティリティ。
+                - Gamma (float): ガンマ。
+                - Theta (float): セータ。
+                - Vega (float): ベガ。
+                - Delta (float): デルタ。
+                - SecurityType (int): 銘柄種別。
+        """
+        response_json = self.call_api(f"board/{symbol}", ApiCategory.INFORMATION, "GET")
+        return response_json
+
+    def get_symbol_by_symbol(self, symbol: str) -> dict:
+        """
+        指定した銘柄の詳細情報を取得します。
+
+        Args:
+            symbol (str): 銘柄コード。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - Symbol (str): 銘柄コード。
+                - SymbolName (str): 銘柄名。
+                - DisplayName (str): 銘柄略称。
+                - Exchange (int): 市場コード。
+                - ExchangeName (str): 市場名称。
+                - BisCategory (str): 業種コード名。
+                - TotalMarketValue (float): 時価総額。
+                - TotalStocks (float): 発行済み株式数（千株）。
+                - TradingUnit (float): 売買単位。
+                - FiscalYearEndBasic (int): 決算期日。
+                - PriceRangeGroup (str): 呼値グループ。
+                - KCMarginBuy (bool): 一般信用買建フラグ。
+                - KCMarginSell (bool): 一般信用売建フラグ。
+                - MarginBuy (bool): 制度信用買建フラグ。
+                - MarginSell (bool): 制度信用売建フラグ。
+                - UpperLimit (float): 値幅上限。
+                - LowerLimit (float): 値幅下限。
+                - Underlyer (str): 原資産コード。
+                - DerivMonth (str): 限月-年月。
+                - TradeStart (int): 取引開始日。
+                - TradeEnd (int): 取引終了日。
+                - StrikePrice (float): 権利行使価格。
+                - PutOrCall (int): プット/コール区分。
+                - ClearingPrice (float): 清算値。
+        """
+        response_json = self.call_api(f"symbol/{symbol}", ApiCategory.INFORMATION, "GET")
+        return response_json
+
+    def get_orders(self) -> dict:
+        """
+        注文一覧を取得します。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ（OrdersSuccessオブジェクトのリスト）。
+        """
+        response_json = self.call_api("orders", ApiCategory.INFORMATION, "GET")
+        return response_json
+
+    def get_positions(self) -> dict:
+        """
+        建玉一覧を取得します。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ（PositionsSuccessオブジェクトのリスト）。
+        """
+        response_json = self.call_api("positions", ApiCategory.INFORMATION, "GET")
+        return response_json
