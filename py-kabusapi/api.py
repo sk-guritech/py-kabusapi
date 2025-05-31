@@ -1,7 +1,7 @@
 import json
 import sys
 from enum import IntEnum
-from typing import Any, Dict, Literal
+from typing import Any, Dict, List, Literal, Optional
 
 import requests
 from error import OrderPlacementError, RequestCheckError
@@ -551,4 +551,347 @@ class KabuStationAPI:
                     - TickMarginPremium (float): プレミアム料刻値。
         """
         response_json = self.call_api(f"margin/marginpremium/{symbol}", ApiCategory.INFORMATION, "GET")
+        return response_json
+
+    def post_sendorder(
+        self,
+        symbol: str,
+        exchange: int,
+        security_type: int,
+        side: str,
+        cash_margin: int,
+        deliv_type: int,
+        account_type: int,
+        qty: int,
+        price: float,
+        expire_day: int,
+        front_order_type: int,
+        margin_trade_type: Optional[int] = None,
+        margin_premium_unit: Optional[float] = None,
+        fund_type: Optional[str] = None,
+        close_position_order: Optional[int] = None,
+        close_positions: Optional[List[Dict[str, Any]]] = None,
+        reverse_limit_order: Optional[Dict[str, Any]] = None,
+    ) -> dict:
+        """
+        注文を発注します。
+
+        Args:
+            symbol (str): 銘柄コード。
+            exchange (int): 市場コード。
+                - 1: 東証
+                - 3: 名証
+                - 5: 福証
+                - 6: 札証
+                - 9: SOR
+                - 27: 東証+
+            security_type (int): 商品種別。
+                - 1: 株式
+            side (str): 売買区分。
+                - "1": 売
+                - "2": 買
+            cash_margin (int): 信用区分。
+                - 1: 現物
+                - 2: 新規
+                - 3: 返済
+            deliv_type (int): 受渡区分。現物買と信用返済は必須。現物売と信用新規は「0(指定なし)」を設定。
+                - 0: 指定なし
+                - 2: お預り金
+                - 3: auマネーコネクト (auマネーコネクト有効時のみ)
+            account_type (int): 口座種別。
+                - 2: 一般
+                - 4: 特定
+                - 12: 法人
+            qty (int): 注文数量。信用一括返済の場合、返済したい合計数量。
+            price (float): 注文価格。成行の場合は0。
+            expire_day (int): 注文有効期限 (yyyyMMdd形式)。0を指定すると「本日」に対応。
+            front_order_type (int): 執行条件。
+                - 10: 成行 (Price=0)
+                - 13: 寄成（前場） (Price=0)
+                - 14: 寄成（後場） (Price=0)
+                - 15: 引成（前場） (Price=0)
+                - 16: 引成（後場） (Price=0)
+                - 17: IOC成行 (Price=0)
+                - 20: 指値 (Price=発注したい金額)
+                - 21: 寄指（前場） (Price=発注したい金額)
+                - 22: 寄指（後場） (Price=発注したい金額)
+                - 23: 引指（前場） (Price=発注したい金額)
+                - 24: 引指（後場） (Price=発注したい金額)
+                - 25: 不成（前場） (Price=発注したい金額)
+                - 26: 不成（後場） (Price=発注したい金額)
+                - 27: IOC指値 (Price=発注したい金額)
+                - 30: 逆指値 (Price=指定なし、ReverseLimitOrderで指定)
+            margin_trade_type (int, optional): 信用取引区分。現物取引の場合は指定不要、信用取引の場合は必須。
+                - 1: 制度信用
+                - 2: 一般信用（長期）
+                - 3: 一般信用（デイトレ）
+            margin_premium_unit (float, optional): 1株あたりのプレミアム料(円)。入札受付中のプレミアム料入札可能銘柄の場合、必須。
+            fund_type (str, optional): 資産区分（預り区分）。現物買は必須。現物売は「'  '」 (半角スペース2つ) を指定必須。信用新規と信用返済は「11」を指定するか、指定なしでも可。
+                - "  ": 現物売の場合
+                - "02": 保護
+                - "AA": 信用代用
+                - "11": 信用取引
+            close_position_order (int, optional): 決済順序。信用返済の場合、必須。
+                - 0: 日付（古い順）、損益（高い順）
+                - 1: 日付（古い順）、損益（低い順）
+                - 2: 日付（新しい順）、損益（高い順）
+                - 3: 日付（新しい順）、損益（低い順）
+                - 4: 損益（高い順）、日付（古い順）
+                - 5: 損益（高い順）、日付（新しい順）
+                - 6: 損益（低い順）、日付（古い順）
+                - 7: 損益（低い順）、日付（新しい順）
+            close_positions (list, optional): 返済建玉指定。信用返済の場合、必須。
+                - HoldID (str): 建玉ID。
+                - Qty (int): 返済したい数量。
+            reverse_limit_order (dict, optional): 逆指値条件。FrontOrderTypeで逆指値を指定した場合のみ必須。
+                - TriggerSec (int): トリガ銘柄。
+                    - 1: 発注銘柄
+                    - 2: NK225指数
+                    - 3: TOPIX指数
+                - TriggerPrice (float): トリガ価格。
+                - UnderOver (int): 以上／以下。
+                    - 1: 以下
+                    - 2: 以上
+                - AfterHitOrderType (int): ヒット後執行条件。
+                    - 1: 成行
+                    - 2: 指値
+                    - 3: 不成
+                - AfterHitPrice (float): ヒット後注文価格。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - Result (int): 結果コード。0が成功、それ以外はエラーコード。
+                - OrderId (str): 受付注文番号。
+        """
+        payload = {
+            "Symbol": symbol,
+            "Exchange": exchange,
+            "SecurityType": security_type,
+            "Side": side,
+            "CashMargin": cash_margin,
+            "DelivType": deliv_type,
+            "AccountType": account_type,
+            "Qty": qty,
+            "Price": price,
+            "ExpireDay": expire_day,
+            "FrontOrderType": front_order_type,
+        }
+
+        if margin_trade_type is not None:
+            payload["MarginTradeType"] = margin_trade_type
+        if margin_premium_unit is not None:
+            payload["MarginPremiumUnit"] = margin_premium_unit
+        if fund_type is not None:
+            payload["FundType"] = fund_type
+        if close_position_order is not None:
+            payload["ClosePositionOrder"] = close_position_order
+        if close_positions is not None:
+            payload["ClosePositions"] = close_positions
+        if reverse_limit_order is not None:
+            payload["ReverseLimitOrder"] = reverse_limit_order
+
+        response_json = self.call_api("sendorder", ApiCategory.ORDER_PLACEMENT, "POST", payload)
+        return response_json
+
+    def post_sendorder_future(
+        self,
+        symbol: str,
+        exchange: int,
+        trade_type: int,
+        time_in_force: int,
+        side: str,
+        qty: int,
+        price: float,
+        expire_day: int,
+        front_order_type: int,
+        close_position_order: Optional[int] = None,
+        close_positions: Optional[List[Dict[str, Any]]] = None,
+        reverse_limit_order: Optional[Dict[str, Any]] = None,
+    ) -> dict:
+        """
+        先物取引の注文を発注します。
+
+        Args:
+            symbol (str): 銘柄コード。
+            exchange (int): 市場コード。
+                - 2: 日通し
+                - 23: 日中
+                - 24: 夜間
+                - 32: SOR日通し
+                - 33: SOR日中
+                - 34: SOR夜間
+            trade_type (int): 取引区分。
+                - 1: 新規
+                - 2: 返済
+            time_in_force (int): 有効期間条件。
+                - 1: FAS
+                - 2: FAK
+                - 3: FOK
+            side (str): 売買区分。
+                - "1": 売
+                - "2": 買
+            qty (int): 注文数量。
+            price (float): 注文価格。成行を指定した場合、0を指定。
+            expire_day (int): 注文有効期限 (yyyyMMdd形式)。0を指定すると「本日」に対応。
+            front_order_type (int): 執行条件。
+                - 18: 引成（派生） (Price=0)
+                - 20: 指値 (Price=発注したい金額)
+                - 28: 引指（派生） (Price=発注したい金額)
+                - 30: 逆指値 (Price=指定なし、ReverseLimitOrderで指定)
+                - 120: 成行（マーケットオーダー） (Price=0)
+            close_position_order (int, optional): 決済順序。ClosePositionOrderとClosePositionsはどちらか一方のみ指定可能。
+                - 0: 日付（古い順）、損益（高い順）
+                - 1: 日付（古い順）、損益（低い順）
+                - 2: 日付（新しい順）、損益（高い順）
+                - 3: 日付（新しい順）、損益（低い順）
+                - 4: 損益（高い順）、日付（古い順）
+                - 5: 損益（高い順）、日付（新しい順）
+                - 6: 損益（低い順）、日付（古い順）
+                - 7: 損益（低い順）、日付（新しい順）
+            close_positions (list, optional): 返済建玉指定。ClosePositionOrderとClosePositionsはどちらか一方のみ指定可能。
+                - HoldID (str): 建玉ID。
+                - Qty (int): 返済したい数量。
+            reverse_limit_order (dict, optional): 逆指値条件。FrontOrderTypeで逆指値を指定した場合のみ必須。
+                - TriggerPrice (float): トリガ価格。
+                - UnderOver (int): 以上／以下。
+                    - 1: 以下
+                    - 2: 以上
+                - AfterHitOrderType (int): ヒット後執行条件。
+                    - 1: 成行
+                    - 2: 指値
+                - AfterHitPrice (float): ヒット後注文価格。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - Result (int): 結果コード。0が成功、それ以外はエラーコード。
+                - OrderId (str): 受付注文番号。
+        """
+        payload = {
+            "Symbol": symbol,
+            "Exchange": exchange,
+            "TradeType": trade_type,
+            "TimeInForce": time_in_force,
+            "Side": side,
+            "Qty": qty,
+            "Price": price,
+            "ExpireDay": expire_day,
+            "FrontOrderType": front_order_type,
+        }
+
+        if close_position_order is not None:
+            payload["ClosePositionOrder"] = close_position_order
+        if close_positions is not None:
+            payload["ClosePositions"] = close_positions
+        if reverse_limit_order is not None:
+            payload["ReverseLimitOrder"] = reverse_limit_order
+
+        response_json = self.call_api("sendorder/future", ApiCategory.ORDER_PLACEMENT, "POST", payload)
+        return response_json
+
+    def post_sendorder_option(
+        self,
+        symbol: str,
+        exchange: int,
+        trade_type: int,
+        time_in_force: int,
+        side: str,
+        qty: int,
+        price: float,
+        expire_day: int,
+        front_order_type: int,
+        close_position_order: Optional[int] = None,
+        close_positions: Optional[List[Dict[str, Any]]] = None,
+        reverse_limit_order: Optional[Dict[str, Any]] = None,
+    ) -> dict:
+        """
+        オプション取引の注文を発注します。
+
+        Args:
+            symbol (str): 銘柄コード。
+            exchange (int): 市場コード。
+                - 2: 日通し
+                - 23: 日中
+                - 24: 夜間
+            trade_type (int): 取引区分。
+                - 1: 新規
+                - 2: 返済
+            time_in_force (int): 有効期間条件。
+                - 1: FAS
+                - 2: FAK
+                - 3: FOK
+            side (str): 売買区分。
+                - "1": 売
+                - "2": 買
+            qty (int): 注文数量。
+            price (float): 注文価格。成行を指定した場合、0を指定。
+            expire_day (int): 注文有効期限 (yyyyMMdd形式)。0を指定すると「本日」に対応。
+            front_order_type (int): 執行条件。
+                - 18: 引成（派生） (Price=0)
+                - 20: 指値 (Price=発注したい金額)
+                - 28: 引指（派生） (Price=発注したい金額)
+                - 30: 逆指値 (Price=指定なし、ReverseLimitOrderで指定)
+                - 120: 成行（マーケットオーダー） (Price=0)
+            close_position_order (int, optional): 決済順序。ClosePositionOrderとClosePositionsはどちらか一方のみ指定可能。
+                - 0: 日付（古い順）、損益（高い順）
+                - 1: 日付（古い順）、損益（低い順）
+                - 2: 日付（新しい順）、損益（高い順）
+                - 3: 日付（新しい順）、損益（低い順）
+                - 4: 損益（高い順）、日付（古い順）
+                - 5: 損益（高い順）、日付（新しい順）
+                - 6: 損益（低い順）、日付（古い順）
+                - 7: 損益（低い順）、日付（新しい順）
+            close_positions (list, optional): 返済建玉指定。ClosePositionOrderとClosePositionsはどちらか一方のみ指定可能。
+                - HoldID (str): 建玉ID。
+                - Qty (int): 返済したい数量。
+            reverse_limit_order (dict, optional): 逆指値条件。FrontOrderTypeで逆指値を指定した場合のみ必須。
+                - TriggerPrice (float): トリガ価格。
+                - UnderOver (int): 以上／以下。
+                    - 1: 以下
+                    - 2: 以上
+                - AfterHitOrderType (int): ヒット後執行条件。
+                    - 1: 成行
+                    - 2: 指値
+                - AfterHitPrice (float): ヒット後注文価格。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - Result (int): 結果コード。0が成功、それ以外はエラーコード。
+                - OrderId (str): 受付注文番号。
+        """
+        payload = {
+            "Symbol": symbol,
+            "Exchange": exchange,
+            "TradeType": trade_type,
+            "TimeInForce": time_in_force,
+            "Side": side,
+            "Qty": qty,
+            "Price": price,
+            "ExpireDay": expire_day,
+            "FrontOrderType": front_order_type,
+        }
+
+        if close_position_order is not None:
+            payload["ClosePositionOrder"] = close_position_order
+        if close_positions is not None:
+            payload["ClosePositions"] = close_positions
+        if reverse_limit_order is not None:
+            payload["ReverseLimitOrder"] = reverse_limit_order
+
+        response_json = self.call_api("sendorder/option", ApiCategory.ORDER_PLACEMENT, "POST", payload)
+        return response_json
+
+    def put_cancelorder(self, order_id: str) -> dict:
+        """
+        注文をキャンセルします。
+
+        Args:
+            order_id (str): 注文番号。sendorderのレスポンスで受け取ったOrderID。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - Result (int): 結果コード。0が成功、それ以外はエラーコード。
+                - OrderId (str): 受付注文番号。
+        """
+        payload = {"OrderId": order_id}
+        response_json = self.call_api("cancelorder", ApiCategory.ORDER_PLACEMENT, "PUT", payload)
         return response_json
