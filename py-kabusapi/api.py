@@ -406,3 +406,149 @@ class KabuStationAPI:
         """
         response_json = self.call_api("positions", ApiCategory.INFORMATION, "GET")
         return response_json
+
+    def get_symbolname_future(self) -> dict:
+        """
+        先物銘柄コードから銘柄名称を取得します。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - Symbol (str): 銘柄コード。
+                - SymbolName (str): 銘柄名称。
+        """
+        response_json = self.call_api("symbolname/future", ApiCategory.INFORMATION, "GET")
+        return response_json
+
+    def get_symbolname_option(self) -> dict:
+        """
+        オプション銘柄コードから銘柄名称を取得します。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - Symbol (str): 銘柄コード。
+                - SymbolName (str): 銘柄名称。
+        """
+        response_json = self.call_api("symbolname/option", ApiCategory.INFORMATION, "GET")
+        return response_json
+
+    def get_symbolname_minioptionweekly(self) -> dict:
+        """
+        ミニオプション（週次）銘柄コードから銘柄名称を取得します。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - Symbol (str): 銘柄コード。
+                - SymbolName (str): 銘柄名称。
+        """
+        response_json = self.call_api("symbolname/minioptionweekly", ApiCategory.INFORMATION, "GET")
+        return response_json
+
+    def get_ranking(self) -> dict:
+        """
+        ランキング情報を取得します。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。ランキングの種類によってスキーマが異なります。
+        """
+        response_json = self.call_api("ranking", ApiCategory.INFORMATION, "GET")
+        return response_json
+
+    def get_exchange_by_symbol(self, symbol: str) -> dict:
+        """
+        為替レート情報を取得します。
+
+        Args:
+            symbol (str): 通貨ペア。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - Symbol (str): 通貨。
+                - BidPrice (float): BID価格。
+                - Spread (float): スプレッド。
+                - AskPrice (float): ASK価格。
+                - Change (float): 前日比。
+                - Time (str): 時刻 (HH:mm:ss形式)。
+        """
+        response_json = self.call_api(f"exchange/{symbol}", ApiCategory.INFORMATION, "GET")
+        return response_json
+
+    def get_regulations_by_symbol(self, symbol: str) -> dict:
+        """
+        指定した銘柄の規制情報を取得します。
+
+        Args:
+            symbol (str): 銘柄コード。対象商品は株式のみ。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - Symbol (str): 銘柄コード。
+                - RegulationsInfo (list): 規制情報のリスト。
+                    - Exchange (int): 規制市場。
+                    - Product (int): 規制取引区分。
+                    - Side (str): 規制売買。
+                    - Reason (str): 理由。
+                    - LimitStartDay (str): 制限開始日 (yyyy/MM/dd HH:mm形式)。
+                    - LimitEndDay (str): 制限終了日 (yyyy/MM/dd HH:mm形式)。
+                    - Level (int): コンプライアンスレベル。
+        """
+        response_json = self.call_api(f"regulations/{symbol}", ApiCategory.INFORMATION, "GET")
+        return response_json
+
+    def get_primaryexchange_by_symbol(self, symbol: str) -> dict:
+        """
+        指定した銘柄の優先市場を取得します。
+
+        Args:
+            symbol (str): 銘柄コード。対象商品は株式のみ。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - Symbol (str): 銘柄コード。
+                - PrimaryExchange (int): 優先市場。
+        """
+        response_json = self.call_api(f"primaryexchange/{symbol}", ApiCategory.INFORMATION, "GET")
+        return response_json
+
+    def get_apisoftlimit(self) -> dict:
+        """
+        APIのワンショット上限値を取得します。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - Stock (float): 現物のワンショット上限 (万円)。
+                - Margin (float): 信用のワンショット上限 (万円)。
+                - Future (float): 先物のワンショット上限 (枚)。
+                - FutureMini (float): ミニ先物のワンショット上限 (枚)。
+                - FutureMicro (float): マイクロ先物のワンショット上限 (枚)。
+                - Option (float): オプションのワンショット上限 (枚)。
+                - MiniOption (float): ミニオプションのワンショット上限 (枚)。
+                - KabuSVersion (str): kabuステーションのバージョン。
+        """
+        response_json = self.call_api("apisoftlimit", ApiCategory.INFORMATION, "GET")
+        return response_json
+
+    def get_margin_marginpremium_by_symbol(self, symbol: str) -> dict:
+        """
+        指定した銘柄のプレミアム料情報を取得します。
+
+        Args:
+            symbol (str): 銘柄コード。
+
+        Returns:
+            dict: リクエスト成功時のJSONデータ。
+                - Symbol (str): 銘柄コード。
+                - GeneralMargin (dict): 一般信用（長期）に関する情報。
+                    - MarginPremiumType (int): プレミアム料入力区分。
+                    - MarginPremium (float): 確定プレミアム料。
+                    - UpperMarginPremium (float): 上限プレミアム料。
+                    - LowerMarginPremium (float): 下限プレミアム料。
+                    - TickMarginPremium (float): プレミアム料刻値。
+                - DayTrade (dict): 一般信用（デイトレ）に関する情報。
+                    - MarginPremiumType (int): プレミアム料入力区分。
+                    - MarginPremium (float): 確定プレミアム料。
+                    - UpperMarginPremium (float): 上限プレミアム料。
+                    - LowerMarginPremium (float): 下限プレミアム料。
+                    - TickMarginPremium (float): プレミアム料刻値。
+        """
+        response_json = self.call_api(f"margin/marginpremium/{symbol}", ApiCategory.INFORMATION, "GET")
+        return response_json
