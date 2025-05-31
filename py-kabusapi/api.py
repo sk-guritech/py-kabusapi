@@ -92,15 +92,17 @@ class KabuStationAPI:
 
         return response_json
 
-    def token(self, api_password: str) -> Dict[str, Any]:
+    def token(self, api_password: str) -> dict:
         """
-        APIトークンを発行します。発行したトークンはインスタンス内に保存され、以降のAPI呼び出しで使用されます。
+        トークンを発行します。発行したトークンはインスタンス内に保存され、以降のAPI呼び出しで使用されます。
 
         Args:
-            api_password (str): パスワード。
+            api_password (str): APIパスワード。
 
         Returns:
-            {"ResultCode": int, "Token": str}
+            dict: リクエスト成功時のJSONデータ。
+                - ResultCode (int): 結果コード。0が成功、それ以外はエラーコード。
+                - Token (str): APIトークン。
 
         """
         payload = {
@@ -114,12 +116,15 @@ class KabuStationAPI:
 
         return response_json
 
-    def wallet_cash(self) -> Dict[str, Any]:
+    def wallet_cash(self) -> dict:
         """
-        口座の取引余力（現物）を取得します。
+        現物買付可能額を取得します。
 
         Returns:
-            {"StockAccountWalletnumber": float, "AuKCStockAccountWalletnumber": float, "AuJbnStockAccountWalletnumber": float}
+            dict: リクエスト成功時のJSONデータ。
+                - StockAccountWallet (float): 現物買付可能額。
+                - AuKCStockAccountWallet (float): うち、三菱UFJ eスマート証券可能額。
+                - AuJbnStockAccountWallet (float): うち、auじぶん銀行残高。
         """
         response_json = self.call_api("wallet/cash", ApiCategory.TRADING_CAPACITY, "GET")
 
