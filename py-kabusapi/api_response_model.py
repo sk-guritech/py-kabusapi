@@ -370,27 +370,27 @@ class RankingApiResponse(BaseModel):
         | list[RankTypeFor14To15]
     )  # ランキングデータ
 
-    _RANKING_TYPE_MAP = {
-        "1": RankTypeFor1To4,
-        "2": RankTypeFor1To4,
-        "3": RankTypeFor1To4,
-        "4": RankTypeFor1To4,
-        "5": RankTypeFor5,
-        "6": RankTypeFor6,
-        "7": RankTypeFor7,
-        "8": RankTypeFor8To13,
-        "9": RankTypeFor8To13,
-        "10": RankTypeFor8To13,
-        "11": RankTypeFor8To13,
-        "12": RankTypeFor8To13,
-        "13": RankTypeFor8To13,
-        "14": RankTypeFor14To15,
-        "15": RankTypeFor14To15,
-    }
-
     @model_validator(mode="before")
     @classmethod
     def _validate_ranking_type(cls, data: dict) -> dict:
+        _ranking_type_map = {
+            "1": RankTypeFor1To4,
+            "2": RankTypeFor1To4,
+            "3": RankTypeFor1To4,
+            "4": RankTypeFor1To4,
+            "5": RankTypeFor5,
+            "6": RankTypeFor6,
+            "7": RankTypeFor7,
+            "8": RankTypeFor8To13,
+            "9": RankTypeFor8To13,
+            "10": RankTypeFor8To13,
+            "11": RankTypeFor8To13,
+            "12": RankTypeFor8To13,
+            "13": RankTypeFor8To13,
+            "14": RankTypeFor14To15,
+            "15": RankTypeFor14To15,
+        }
+
         if "Type" not in data or "Ranking" not in data or not isinstance(data["Ranking"], list):
             return data
 
@@ -399,7 +399,7 @@ class RankingApiResponse(BaseModel):
 
         expected_model: (
             RankTypeFor1To4 | RankTypeFor5 | RankTypeFor6 | RankTypeFor7 | RankTypeFor8To13 | RankTypeFor14To15
-        ) = cls._RANKING_TYPE_MAP[ranking_type_value]
+        ) = _ranking_type_map[ranking_type_value]
 
         validated_ranking_data_list = []
         for ranking_data in ranking_data_list:
