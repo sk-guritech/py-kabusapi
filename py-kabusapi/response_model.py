@@ -1,6 +1,33 @@
-from typing import Literal, Optional, cast
+from typing import Literal, Optional, TypeVar, cast
 
+from const import ApiResultCategory
 from pydantic import BaseModel, RootModel, model_validator
+
+T = TypeVar("T", bound=BaseModel)
+
+
+class HttpErrorResponse(BaseModel):
+    Code: int  # エラーコード
+    Message: str  # エラーメッセージ
+
+
+class ApiErrorResponse(BaseModel):
+    ResultCode: int  # エラーコード
+
+
+class ApiResultSuccess[T](BaseModel):
+    api_result_category: Literal[ApiResultCategory.SUCCESS] = ApiResultCategory.SUCCESS
+    content: T
+
+
+class ApiResultHttpError(BaseModel):
+    api_result_category: Literal[ApiResultCategory.HTTP_ERROR] = ApiResultCategory.HTTP_ERROR
+    content: HttpErrorResponse
+
+
+class ApiResultApiError(BaseModel):
+    api_result_category: Literal[ApiResultCategory.API_ERROR] = ApiResultCategory.API_ERROR
+    content: ApiErrorResponse
 
 
 # /token

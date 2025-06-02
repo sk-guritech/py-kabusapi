@@ -1,14 +1,20 @@
 import json
-from enum import IntEnum
 from typing import Any, Dict, List, Literal, Optional, Type, TypeVar
 from urllib.parse import urlencode
 
 import requests
-from api_response_model import (
+from const import ApiCategory, ApiResultCategory
+from pydantic import BaseModel
+from response_model import (
+    ApiErrorResponse,
+    ApiResultApiError,
+    ApiResultHttpError,
+    ApiResultSuccess,
     ApisoftlimitApiResponse,
     BoardBySymbolApiResponse,
     CancelorderApiResponse,
     ExchangeBySymbolApiResponse,
+    HttpErrorResponse,
     MarginMarginpremiumBySymbolApiResponse,
     OrdersApiResponse,
     PositionsApiResponse,
@@ -32,47 +38,8 @@ from api_response_model import (
     WalletOptionApiResponse,
     WalletOptionBySymbolApiResponse,
 )
-from pydantic import BaseModel
 
 T = TypeVar("T", bound=BaseModel)
-
-
-class ApiCategory(IntEnum):
-    AUTHENTICATION = 0
-    ORDER_PLACEMENT = 1
-    TRADING_CAPACITY = 2
-    INFORMATION = 3
-    STOCK_REGISTRATION = 4
-
-
-class ApiResultCategory(IntEnum):
-    SUCCESS = 0
-    HTTP_ERROR = 1
-    API_ERROR = 2
-
-
-class HttpErrorResponse(BaseModel):
-    Code: int  # エラーコード
-    Message: str  # エラーメッセージ
-
-
-class ApiErrorResponse(BaseModel):
-    ResultCode: int  # エラーコード
-
-
-class ApiResultSuccess[T](BaseModel):
-    api_result_category: Literal[ApiResultCategory.SUCCESS] = ApiResultCategory.SUCCESS
-    content: T
-
-
-class ApiResultHttpError(BaseModel):
-    api_result_category: Literal[ApiResultCategory.HTTP_ERROR] = ApiResultCategory.HTTP_ERROR
-    content: HttpErrorResponse
-
-
-class ApiResultApiError(BaseModel):
-    api_result_category: Literal[ApiResultCategory.API_ERROR] = ApiResultCategory.API_ERROR
-    content: ApiErrorResponse
 
 
 class KabuStationAPI:
