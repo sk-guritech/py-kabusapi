@@ -80,6 +80,20 @@ class KabuStationAPI:
         self.base_url = __generate_base_url(host_name, environment, is_in_docker_container)
         self.x_api_key: str | None = None
 
+    def _add_common_order_fields(
+        self,
+        payload: dict,
+        close_position_order: Optional[int] = None,
+        close_positions: Optional[List[Dict[str, Any]]] = None,
+        reverse_limit_order: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        if close_position_order is not None:
+            payload["ClosePositionOrder"] = close_position_order
+        if close_positions is not None:
+            payload["ClosePositions"] = close_positions
+        if reverse_limit_order is not None:
+            payload["ReverseLimitOrder"] = reverse_limit_order
+
     def call_api(
         self, path: str, api_category: ApiCategory, method: str, api_response_basemodel: Type[T], payload={}
     ) -> T | HttpErrorResponse | ApiErrorResponse:
@@ -232,12 +246,7 @@ class KabuStationAPI:
             payload["MarginPremiumUnit"] = margin_premium_unit
         if fund_type is not None:
             payload["FundType"] = fund_type
-        if close_position_order is not None:
-            payload["ClosePositionOrder"] = close_position_order
-        if close_positions is not None:
-            payload["ClosePositions"] = close_positions
-        if reverse_limit_order is not None:
-            payload["ReverseLimitOrder"] = reverse_limit_order
+        self._add_common_order_fields(payload, close_position_order, close_positions, reverse_limit_order)
 
         return self.call_api("sendorder", ApiCategory.ORDER_PLACEMENT, "POST", SendorderApiResponse, payload)
 
@@ -288,12 +297,7 @@ class KabuStationAPI:
             "FrontOrderType": front_order_type,
         }
 
-        if close_position_order is not None:
-            payload["ClosePositionOrder"] = close_position_order
-        if close_positions is not None:
-            payload["ClosePositions"] = close_positions
-        if reverse_limit_order is not None:
-            payload["ReverseLimitOrder"] = reverse_limit_order
+        self._add_common_order_fields(payload, close_position_order, close_positions, reverse_limit_order)
 
         return self.call_api(
             "sendorder/future", ApiCategory.ORDER_PLACEMENT, "POST", SendorderFutureApiResponse, payload
@@ -346,12 +350,7 @@ class KabuStationAPI:
             "FrontOrderType": front_order_type,
         }
 
-        if close_position_order is not None:
-            payload["ClosePositionOrder"] = close_position_order
-        if close_positions is not None:
-            payload["ClosePositions"] = close_positions
-        if reverse_limit_order is not None:
-            payload["ReverseLimitOrder"] = reverse_limit_order
+        self._add_common_order_fields(payload, close_position_order, close_positions, reverse_limit_order)
 
         return self.call_api(
             "sendorder/option", ApiCategory.ORDER_PLACEMENT, "POST", SendorderOptionApiResponse, payload
