@@ -202,6 +202,7 @@ class SymbolBySymbolApiResponse(BaseModel):
     ClearingPrice: float | None = None  # 清算値
 
 
+# /orders
 class OrderDetail(BaseModel):
     SeqNum: int
     Id: str  # 注文詳細番号
@@ -243,11 +244,11 @@ class Order(BaseModel):
     Details: list[OrderDetail]  # 注文詳細
 
 
-# /orders
 class OrdersApiResponse(RootModel[list[Order]]):
     pass
 
 
+# /positions
 class Position(BaseModel):
     ExecutionID: str | None = None  # 約定番号
     AccountType: int  # 口座種別
@@ -273,7 +274,6 @@ class Position(BaseModel):
     ProfitLossRate: float | None = None  # 評価損益率
 
 
-# /positions
 class PositionsApiResponse(RootModel[list[Position]]):
     pass
 
@@ -296,6 +296,7 @@ class SymbolnameMinioptionweeklyApiResponse(BaseModel):
     SymbolName: str  # 銘柄名称
 
 
+# /ranking
 class RankTypeFor1To4(BaseModel):  # type: ignore
     No: Optional[int]  # 順位
     Trend: Literal["0", "1", "2", "3", "4", "5"]  # トレンド
@@ -389,7 +390,6 @@ class RankTypeFor14To15(BaseModel):  # type: ignore
     ChangePercentage: float  # 騰落率(%)
 
 
-# /ranking
 class RankingApiResponse(BaseModel):
     Type: str  # 種別
     ExchangeDivision: str  # 市場
