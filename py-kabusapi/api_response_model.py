@@ -181,47 +181,49 @@ class SymbolBySymbolApiResponse(BaseModel):
     ClearingPrice: float | None = None  # 清算値
 
 
-class OrdersApiResponse(BaseModel):
-    class Order(BaseModel):
-        class OrderDetail(BaseModel):
-            SeqNum: int
-            Id: str  # 注文詳細番号
-            RecType: int  # 明細種別
-            ExchangeID: str  # 取引所番号
-            State: int  # 状態
-            TransactTime: str  # 処理時刻
-            OrdType: int  # 執行条件
-            Price: float  # 値段
-            Qty: float  # 数量
-            ExecutionID: str  # 約定番号
-            ExecutionDay: str  # 約定日時
-            DelivDay: int  # 受渡日
-            Commission: float  # 手数料
-            CommissionTax: float  # 手数料消費税
+class OrderDetail(BaseModel):
+    SeqNum: int
+    Id: str  # 注文詳細番号
+    RecType: int  # 明細種別
+    ExchangeID: str  # 取引所番号
+    State: int  # 状態
+    TransactTime: str  # 処理時刻
+    OrdType: int  # 執行条件
+    Price: float  # 値段
+    Qty: float  # 数量
+    ExecutionID: str  # 約定番号
+    ExecutionDay: str  # 約定日時
+    DelivDay: int  # 受渡日
+    Commission: float  # 手数料
+    CommissionTax: float  # 手数料消費税
 
-        Id: str  # 注文番号
-        State: str  # 状態
-        OrderState: str  # 注文状態
-        OrdType: int  # 執行条件
-        RecvTime: str  # 受注日時
-        Symbol: str  # 銘柄コード
-        SymbolName: str  # 銘柄名
-        Exchange: int  # 市場コード
-        ExchangeName: str  # 市場名
-        TimeInForce: int | None = None  # 有効期間条件
-        Price: float  # 値段
-        OrderQty: float  # 発注数量
-        CumQty: float  # 約定数量
-        Side: str  # 売買区分
-        CashMargin: int  # 取引区分
-        AccountType: int  # 口座種別
-        DelivType: int  # 受渡区分
-        ExpireDay: int  # 有効期限 (yyyyMMdd形式)
-        MarginTradeType: int  # 信用取引区分
-        MarginPremium: float | None = None  # プレミアム料
-        Details: list[OrderDetail]  # 注文詳細
 
-    Orders: list[Order]  # 注文一覧
+class Order(BaseModel):
+    Id: str  # 注文番号
+    State: str  # 状態
+    OrderState: str  # 注文状態
+    OrdType: int  # 執行条件
+    RecvTime: str  # 受注日時
+    Symbol: str  # 銘柄コード
+    SymbolName: str  # 銘柄名
+    Exchange: int  # 市場コード
+    ExchangeName: str  # 市場名
+    TimeInForce: int | None = None  # 有効期間条件
+    Price: float  # 値段
+    OrderQty: float  # 発注数量
+    CumQty: float  # 約定数量
+    Side: str  # 売買区分
+    CashMargin: int  # 取引区分
+    AccountType: int  # 口座種別
+    DelivType: int  # 受渡区分
+    ExpireDay: int  # 有効期限 (yyyyMMdd形式)
+    MarginTradeType: int  # 信用取引区分
+    MarginPremium: float | None = None  # プレミアム料
+    Details: list[OrderDetail]  # 注文詳細
+
+
+class OrdersApiResponse(RootModel[list[Order]]):
+    pass
 
 
 class Position(BaseModel):
