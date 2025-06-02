@@ -80,6 +80,12 @@ class KabuStationAPI:
         self.base_url = __generate_base_url(host_name, environment, is_in_docker_container)
         self.x_api_key: str | None = None
 
+    def _add_optional_fields(self, payload: dict, **optional_fields) -> None:
+        """オプショナルフィールドをペイロードに追加する汎用ヘルパーメソッド"""
+        for key, value in optional_fields.items():
+            if value is not None:
+                payload[key] = value
+
     def _add_common_order_fields(
         self,
         payload: dict,
@@ -87,15 +93,13 @@ class KabuStationAPI:
         close_positions: Optional[List[Dict[str, Any]]] = None,
         reverse_limit_order: Optional[Dict[str, Any]] = None,
     ) -> None:
-        optional_payload = {
-            "ClosePositionOrder": close_position_order,
-            "ClosePositions": close_positions,
-            "ReverseLimitOrder": reverse_limit_order,
-        }
-
-        for key, value in optional_payload.items():
-            if value is not None:
-                payload[key] = value
+        """注文系メソッドで共通のオプショナルフィールドをペイロードに追加する"""
+        self._add_optional_fields(
+            payload,
+            ClosePositionOrder=close_position_order,
+            ClosePositions=close_positions,
+            ReverseLimitOrder=reverse_limit_order,
+        )
 
     def call_api(
         self, path: str, api_category: ApiCategory, method: str, api_response_basemodel: Type[T], payload={}
@@ -243,12 +247,12 @@ class KabuStationAPI:
             "FrontOrderType": front_order_type,
         }
 
-        if margin_trade_type is not None:
-            payload["MarginTradeType"] = margin_trade_type
-        if margin_premium_unit is not None:
-            payload["MarginPremiumUnit"] = margin_premium_unit
-        if fund_type is not None:
-            payload["FundType"] = fund_type
+        self._add_optional_fields(
+            payload,
+            MarginTradeType=margin_trade_type,
+            MarginPremiumUnit=margin_premium_unit,
+            FundType=fund_type,
+        )
         self._add_common_order_fields(payload, close_position_order, close_positions, reverse_limit_order)
 
         return self.call_api("sendorder", ApiCategory.ORDER_PLACEMENT, "POST", SendorderApiResponse, payload)
@@ -490,18 +494,18 @@ class KabuStationAPI:
             side: 売買区分 (1: 売, 2: 買)
             cashmargin: 取引区分 (2: 新規, 3: 返済)
         """
-        raw_params = {
-            "product": product,
-            "id": id,
-            "updtime": updtime,
-            "details": details,
-            "symbol": symbol,
-            "state": state,
-            "side": side,
-            "cashmargin": cashmargin,
-        }
-
-        params = {k: v for k, v in raw_params.items() if v is not None}
+        params = {}
+        self._add_optional_fields(
+            params,
+            product=product,
+            id=id,
+            updtime=updtime,
+            details=details,
+            symbol=symbol,
+            state=state,
+            side=side,
+            cashmargin=cashmargin,
+        )
         query_string = urlencode(params)
         endpoint = "orders"
         if query_string:
@@ -525,9 +529,14 @@ class KabuStationAPI:
             side: 売買区分 (1: 売, 2: 買)
             addinfo: 追加情報出力フラグ ("true" または "false")
         """
-        raw_params = {"product": product, "symbol": symbol, "side": side, "addinfo": addinfo}
-
-        params = {k: v for k, v in raw_params.items() if v is not None}
+        params = {}
+        self._add_optional_fields(
+            params,
+            product=product,
+            symbol=symbol,
+            side=side,
+            addinfo=addinfo,
+        )
         query_string = urlencode(params)
         endpoint = "positions"
         if query_string:
@@ -543,10 +552,12 @@ class KabuStationAPI:
             future_code: 先物コード
             deriv_month: 限月
         """
-        raw_params = {"FutureCode": future_code, "DerivMonth": deriv_month}
-
-        # None を除外してクエリストリング生成
-        params = {k: v for k, v in raw_params.items() if v is not None}
+        params = {}
+        self._add_optional_fields(
+            params,
+            FutureCode=future_code,
+            DerivMonth=deriv_month,
+        )
         query_string = urlencode(params)
         endpoint = "symbolname/future"
         if query_string:
@@ -570,15 +581,14 @@ class KabuStationAPI:
             strike_price: 権利行使価格
             option_code: オプションコード
         """
-        raw_params = {
-            "DerivMonth": deriv_month,
-            "PutOrCall": put_or_call,
-            "StrikePrice": strike_price,
-            "OptionCode": option_code,
-        }
-
-        # None を除いたパラメータのみ送信
-        params = {k: v for k, v in raw_params.items() if v is not None}
+        params = {}
+        self._add_optional_fields(
+            params,
+            DerivMonth=deriv_month,
+            PutOrCall=put_or_call,
+            StrikePrice=strike_price,
+            OptionCode=option_code,
+        )
         query_string = urlencode(params)
         endpoint = "symbolname/option"
         if query_string:
@@ -602,12 +612,14 @@ class KabuStationAPI:
             put_or_call: コール or プット
             strike_price: 権利行使価格
         """
-        params = {
-            "DerivMonth": deriv_month,
-            "DerivWeekly": deriv_weekly,
-            "PutOrCall": put_or_call,
-            "StrikePrice": strike_price,
-        }
+        params = {}
+        self._add_optional_fields(
+            params,
+            DerivMonth=deriv_month,
+            DerivWeekly=deriv_weekly,
+            PutOrCall=put_or_call,
+            StrikePrice=strike_price,
+        )
 
         query_string = urlencode(params)
         endpoint = f"symbolname/minioptionweekly?{query_string}"
@@ -634,7 +646,12 @@ class KabuStationAPI:
             type: ランキング種別
             exchange_division: 市場
         """
-        params = {"Type": type, "ExchangeDivision": exchange_division}
+        params = {}
+        self._add_optional_fields(
+            params,
+            Type=type,
+            ExchangeDivision=exchange_division,
+        )
 
         query_string = urlencode(params)
         endpoint = f"ranking?{query_string}"
