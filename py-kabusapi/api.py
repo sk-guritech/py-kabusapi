@@ -142,6 +142,17 @@ class KabuStationAPI:
 
             return HttpErrorResponse(**response_json)
 
+    def __merge_payloads(self, payload: dict[str, Any], optional_payload: dict[str, Any]) -> dict[str, Any]:
+        merged_payload = payload.copy()
+        for key, value in optional_payload.items():
+            if value is not None:
+                merged_payload[key] = value
+
+        return merged_payload
+
+    def __build_query_string(self, params: Dict[str, Any]) -> str:
+        return urlencode({k: v for k, v in params.items() if v is not None})
+
     def token(self, api_password: str):
         """APIトークンを発行します
         ```
@@ -226,20 +237,22 @@ class KabuStationAPI:
             "FrontOrderType": front_order_type,
         }
 
-        if margin_trade_type is not None:
-            payload["MarginTradeType"] = margin_trade_type
-        if margin_premium_unit is not None:
-            payload["MarginPremiumUnit"] = margin_premium_unit
-        if fund_type is not None:
-            payload["FundType"] = fund_type
-        if close_position_order is not None:
-            payload["ClosePositionOrder"] = close_position_order
-        if close_positions is not None:
-            payload["ClosePositions"] = close_positions
-        if reverse_limit_order is not None:
-            payload["ReverseLimitOrder"] = reverse_limit_order
+        optional_payload = {
+            "MarginTradeType": margin_trade_type,
+            "MarginPremiumUnit": margin_premium_unit,
+            "FundType": fund_type,
+            "ClosePositionOrder": close_position_order,
+            "ClosePositions": close_positions,
+            "ReverseLimitOrder": reverse_limit_order,
+        }
 
-        return self.call_api("sendorder", ApiCategory.ORDER_PLACEMENT, "POST", SendorderApiResponse, payload)
+        return self.call_api(
+            "sendorder",
+            ApiCategory.ORDER_PLACEMENT,
+            "POST",
+            SendorderApiResponse,
+            self.__merge_payloads(payload, optional_payload),
+        )
 
     def sendorder_future(
         self,
@@ -288,15 +301,18 @@ class KabuStationAPI:
             "FrontOrderType": front_order_type,
         }
 
-        if close_position_order is not None:
-            payload["ClosePositionOrder"] = close_position_order
-        if close_positions is not None:
-            payload["ClosePositions"] = close_positions
-        if reverse_limit_order is not None:
-            payload["ReverseLimitOrder"] = reverse_limit_order
+        optional_payload = {
+            "ClosePositionOrder": close_position_order,
+            "ClosePositions": close_positions,
+            "ReverseLimitOrder": reverse_limit_order,
+        }
 
         return self.call_api(
-            "sendorder/future", ApiCategory.ORDER_PLACEMENT, "POST", SendorderFutureApiResponse, payload
+            "sendorder/future",
+            ApiCategory.ORDER_PLACEMENT,
+            "POST",
+            SendorderFutureApiResponse,
+            self.__merge_payloads(payload, optional_payload),
         )
 
     def sendorder_option(
@@ -346,15 +362,18 @@ class KabuStationAPI:
             "FrontOrderType": front_order_type,
         }
 
-        if close_position_order is not None:
-            payload["ClosePositionOrder"] = close_position_order
-        if close_positions is not None:
-            payload["ClosePositions"] = close_positions
-        if reverse_limit_order is not None:
-            payload["ReverseLimitOrder"] = reverse_limit_order
+        optional_payload = {
+            "ClosePositionOrder": close_position_order,
+            "ClosePositions": close_positions,
+            "ReverseLimitOrder": reverse_limit_order,
+        }
 
         return self.call_api(
-            "sendorder/option", ApiCategory.ORDER_PLACEMENT, "POST", SendorderOptionApiResponse, payload
+            "sendorder/option",
+            ApiCategory.ORDER_PLACEMENT,
+            "POST",
+            SendorderOptionApiResponse,
+            self.__merge_payloads(payload, optional_payload),
         )
 
     def cancelorder(self, order_id: str):
@@ -499,13 +518,9 @@ class KabuStationAPI:
             "cashmargin": cashmargin,
         }
 
-        params = {k: v for k, v in raw_params.items() if v is not None}
-        query_string = urlencode(params)
-        endpoint = "orders"
-        if query_string:
-            endpoint += f"?{query_string}"
+        query_string = self.__build_query_string(raw_params)
 
-        return self.call_api(endpoint, ApiCategory.INFORMATION, "GET", OrdersApiResponse)
+        return self.call_api(f"orders?{query_string}", ApiCategory.INFORMATION, "GET", OrdersApiResponse)
 
     def positions(
         self,
@@ -523,15 +538,16 @@ class KabuStationAPI:
             side: 売買区分 (1: 売, 2: 買)
             addinfo: 追加情報出力フラグ ("true" または "false")
         """
-        raw_params = {"product": product, "symbol": symbol, "side": side, "addinfo": addinfo}
+        raw_params = {
+            "product": product,
+            "symbol": symbol,
+            "side": side,
+            "addinfo": addinfo,
+        }
 
-        params = {k: v for k, v in raw_params.items() if v is not None}
-        query_string = urlencode(params)
-        endpoint = "positions"
-        if query_string:
-            endpoint += f"?{query_string}"
+        query_string = self.__build_query_string(raw_params)
 
-        return self.call_api(endpoint, ApiCategory.INFORMATION, "GET", PositionsApiResponse)
+        return self.call_api(f"positions?{query_string}", ApiCategory.INFORMATION, "GET", PositionsApiResponse)
 
     def symbolname_future(self, future_code: str | None = None, deriv_month: int = 0):
         """
@@ -541,16 +557,16 @@ class KabuStationAPI:
             future_code: 先物コード
             deriv_month: 限月
         """
-        raw_params = {"FutureCode": future_code, "DerivMonth": deriv_month}
+        raw_params = {
+            "FutureCode": future_code,
+            "DerivMonth": deriv_month,
+        }
 
-        # None を除外してクエリストリング生成
-        params = {k: v for k, v in raw_params.items() if v is not None}
-        query_string = urlencode(params)
-        endpoint = "symbolname/future"
-        if query_string:
-            endpoint += f"?{query_string}"
+        query_string = self.__build_query_string(raw_params)
 
-        return self.call_api(endpoint, ApiCategory.INFORMATION, "GET", SymbolnameFutureApiResponse)
+        return self.call_api(
+            f"symbolname/future?{query_string}", ApiCategory.INFORMATION, "GET", SymbolnameFutureApiResponse
+        )
 
     def symbolname_option(
         self,
@@ -575,14 +591,11 @@ class KabuStationAPI:
             "OptionCode": option_code,
         }
 
-        # None を除いたパラメータのみ送信
-        params = {k: v for k, v in raw_params.items() if v is not None}
-        query_string = urlencode(params)
-        endpoint = "symbolname/option"
-        if query_string:
-            endpoint += f"?{query_string}"
+        query_string = self.__build_query_string(raw_params)
 
-        return self.call_api(endpoint, ApiCategory.INFORMATION, "GET", SymbolnameOptionApiResponse)
+        return self.call_api(
+            f"symbolname/option?{query_string}", ApiCategory.INFORMATION, "GET", SymbolnameOptionApiResponse
+        )
 
     def symbolname_minioptionweekly(
         self,
