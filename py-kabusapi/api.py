@@ -1,5 +1,4 @@
 import json
-import sys
 from enum import IntEnum
 from typing import Any, Dict, List, Literal, Optional, Type, TypeVar
 from urllib.parse import urlencode
@@ -33,7 +32,6 @@ from api_response_model import (
     WalletOptionApiResponse,
     WalletOptionBySymbolApiResponse,
 )
-from error import OrderPlacementError, RequestCheckError
 from pydantic import BaseModel
 
 T = TypeVar("T", bound=BaseModel)
@@ -47,6 +45,12 @@ class ApiCategory(IntEnum):
     STOCK_REGISTRATION = 4
 
 
+class ApiResultCategory(IntEnum):
+    SUCCESS = 0
+    HTTP_ERROR = 1
+    API_ERROR = 2
+
+
 class HttpErrorResponse(BaseModel):
     Code: int  # エラーコード
     Message: str  # エラーメッセージ
@@ -54,6 +58,21 @@ class HttpErrorResponse(BaseModel):
 
 class ApiErrorResponse(BaseModel):
     ResultCode: int  # エラーコード
+
+
+class ApiResultSuccess[T](BaseModel):
+    api_result_category: Literal[ApiResultCategory.SUCCESS] = ApiResultCategory.SUCCESS
+    content: T
+
+
+class ApiResultHttpError(BaseModel):
+    api_result_category: Literal[ApiResultCategory.HTTP_ERROR] = ApiResultCategory.HTTP_ERROR
+    content: HttpErrorResponse
+
+
+class ApiResultApiError(BaseModel):
+    api_result_category: Literal[ApiResultCategory.API_ERROR] = ApiResultCategory.API_ERROR
+    content: ApiErrorResponse
 
 
 class KabuStationAPI:
@@ -82,7 +101,7 @@ class KabuStationAPI:
 
     def call_api(
         self, path: str, api_category: ApiCategory, method: str, api_response_basemodel: Type[T], payload={}
-    ) -> T | HttpErrorResponse | ApiErrorResponse:
+    ) -> ApiResultSuccess[T] | ApiResultHttpError | ApiResultApiError:
         def __build_headers(api_category: ApiCategory):
             headers = {
                 "content-type": "application/json",
@@ -125,22 +144,15 @@ class KabuStationAPI:
 
         if isinstance(response_json, list) or response.status_code == 200:
             if isinstance(response_json, list):
-                return api_response_basemodel(response_json)  # type: ignore
+                return ApiResultSuccess[T](content=api_response_basemodel(response_json))  # type: ignore
 
-            if result := __extract_result(api_category, response_json):
-                order_placement_error = OrderPlacementError.from_code(result)
-                print(order_placement_error, file=sys.stderr)
+            if __extract_result(api_category, response_json):
+                return ApiResultHttpError(content=ApiErrorResponse(**response_json))  # type: ignore
 
-                return ApiErrorResponse(**response_json)
-
-            return api_response_basemodel(**response_json)
+            return ApiResultSuccess[T](content=api_response_basemodel(**response_json))
 
         else:
-            code: int = response_json["Code"]
-            request_check_error = RequestCheckError.from_code(code)
-            print(request_check_error, file=sys.stderr)
-
-            return HttpErrorResponse(**response_json)
+            return ApiResultHttpError(content=HttpErrorResponse(Code=response.status_code, Message=response.reason))
 
     def __merge_payloads(self, payload: dict[str, Any], optional_payload: dict[str, Any]) -> dict[str, Any]:
         merged_payload = payload.copy()
@@ -173,8 +185,8 @@ class KabuStationAPI:
 
         response = self.call_api("token", ApiCategory.AUTHENTICATION, "POST", TokenApiResponse, payload)
 
-        if isinstance(response, TokenApiResponse):
-            self.x_api_key = response.Token
+        if response.api_result_category == ApiResultCategory.SUCCESS:
+            self.x_api_key = response.content.Token
 
         return response
 
@@ -630,7 +642,6 @@ class KabuStationAPI:
         type: Literal["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"],
         exchange_division: Literal["ALL", "T", "TP", "TS", "TG", "M", "FK", "S"],
     ):
-        # TODO: FIX
         """
         ```
         詳細ランキング画面と同様の各種ランキングを返します。
