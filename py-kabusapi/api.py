@@ -87,12 +87,15 @@ class KabuStationAPI:
         close_positions: Optional[List[Dict[str, Any]]] = None,
         reverse_limit_order: Optional[Dict[str, Any]] = None,
     ) -> None:
-        if close_position_order is not None:
-            payload["ClosePositionOrder"] = close_position_order
-        if close_positions is not None:
-            payload["ClosePositions"] = close_positions
-        if reverse_limit_order is not None:
-            payload["ReverseLimitOrder"] = reverse_limit_order
+        optional_payload = {
+            "ClosePositionOrder": close_position_order,
+            "ClosePositions": close_positions,
+            "ReverseLimitOrder": reverse_limit_order,
+        }
+
+        for key, value in optional_payload.items():
+            if value is not None:
+                payload[key] = value
 
     def call_api(
         self, path: str, api_category: ApiCategory, method: str, api_response_basemodel: Type[T], payload={}
