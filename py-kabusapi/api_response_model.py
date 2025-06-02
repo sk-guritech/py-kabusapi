@@ -446,7 +446,7 @@ class ApisoftlimitApiResponse(BaseModel):
     FutureMicro: float  # マイクロ先物のワンショット上限 (枚)
     Option: float  # オプションのワンショット上限 (枚)
     MiniOption: float  # ミニオプションのワンショット上限 (枚)
-    KabuSVersion: str  # kabuステーションのバージョン
+    kabuSVersion: str  # kabuステーションのバージョン
 
 
 class MarginMarginpremiumBySymbolApiResponse(BaseModel):
