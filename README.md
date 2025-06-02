@@ -3,7 +3,7 @@
 [![Python](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-**py-kabusapi**は、kabu.com証券が提供するKabu Station APIのPythonクライアントライブラリです。日本株式市場での取引、口座情報の取得、マーケットデータの取得を簡単に行うことができます。
+**py-kabusapi**は、三菱UFJ eスマート証券が提供するKabu Station APIのPythonクライアントライブラリです。日本株式市場での取引、口座情報の取得、マーケットデータの取得を簡単に行うことができます。
 
 ## 特徴
 
@@ -443,7 +443,7 @@ except ValueError:
 ### 必要な環境
 
 - Python 3.12
-- kabuステーション（kabu.com証券）
+- kabuステーション（三菱UFJ eスマート証券）
 - APIパスワードの設定
 
 ### 開発用セットアップ
@@ -557,9 +557,9 @@ if __name__ == "__main__":
 
 ## 注意事項
 
-- このライブラリはkabu.com証券のKabu Station APIを使用します
+- このライブラリは三菱UFJ eスマート証券のKabu Station APIを使用します
 - 実際の取引を行う前に、必ずテスト環境で動作確認を行ってください
-- APIの利用には、kabu.com証券での口座開設とAPIパスワードの設定が必要です
+- APIの利用には、三菱UFJ eスマート証券での口座開設とAPIパスワードの設定が必要です
 - 取引は自己責任で行ってください
 
 ## サポート
