@@ -3,43 +3,51 @@ from typing import Literal, Optional, cast
 from pydantic import BaseModel, RootModel, model_validator
 
 
+# /token
 class TokenApiResponse(BaseModel):
     ResultCode: int  # 結果コード
     Token: str  # APIトークン
 
 
+# /sendorder
 class SendorderApiResponse(BaseModel):
     Result: int  # 結果コード
     OrderId: str  # 受付注文番号
 
 
+# /sendorder/future
 class SendorderFutureApiResponse(BaseModel):
     Result: int  # 結果コード
     OrderId: str  # 受付注文番号
 
 
+# /sendorder/option
 class SendorderOptionApiResponse(BaseModel):
     Result: int  # 結果コード
     OrderId: str  # 受付注文番号
 
 
+# /cancelorder
 class CancelorderApiResponse(BaseModel):
     Result: int  # 結果コード
     OrderId: str  # 受付注文番号
 
 
+# /wallet/cash
 class WalletCashApiResponse(BaseModel):
     StockAccountWallet: float  # 現物買付可能額
     AuKCStockAccountWallet: float  # うち、三菱UFJ eスマート証券可能額
     AuJbnStockAccountWallet: float  # うち、auじぶん銀行残高
 
 
+# /wallet/cash/{symbol}
 class WalletCashBySymbolApiResponse(BaseModel):
     StockAccountWallet: float  # 現物買付可能額
     AuKCStockAccountWallet: float  # うち、三菱UFJ eスマート証券可能額
     AuJbnStockAccountWallet: float  # うち、auじぶん銀行残高
 
 
+# /wallet/margin
 class WalletMarginApiResponse(BaseModel):
     MarginAccountWallet: float  # 信用新規可能額
     DepositkeepRate: float  # 保証金維持率
@@ -47,6 +55,7 @@ class WalletMarginApiResponse(BaseModel):
     CashOfConsignmentDepositRate: float | None  # 現金委託保証金率
 
 
+# /wallet/margin/{symbol}
 class WalletMarginBySymbolApiResponse(BaseModel):
     MarginAccountWallet: float  # 信用新規可能額
     DepositkeepRate: float  # 保証金維持率
@@ -54,34 +63,43 @@ class WalletMarginBySymbolApiResponse(BaseModel):
     CashOfConsignmentDepositRate: float | None  # 現金委託保証金率
 
 
+# /wallet/future
 class WalletFutureApiResponse(BaseModel):
     FutureTradeLimit: float  # 新規建玉可能額
     MarginRequirement: float | None  # 買い必要証拠金額
     MarginRequirementSell: float | None  # 売り必要証拠金額
 
 
+# /wallet/future/{symbol}
 class WalletFutureBySymbolApiResponse(BaseModel):
     FutureTradeLimit: float  # 新規建玉可能額
+
     MarginRequirement: float | None  # 買い必要証拠金額
     MarginRequirementSell: float | None  # 売り必要証拠金額
 
 
+# /wallet/option
 class WalletOptionApiResponse(BaseModel):
     OptionBuyTradeLimit: float  # 買新規建玉可能額
     OptionSellTradeLimit: float  # 売新規建玉可能額
+
     MarginRequirement: float | None  # 必要証拠金額
 
 
+# /wallet/option/{symbol}
 class WalletOptionBySymbolApiResponse(BaseModel):
     OptionBuyTradeLimit: float  # 買新規建玉可能額
     OptionSellTradeLimit: float  # 売新規建玉可能額
     MarginRequirement: float | None  # 必要証拠金額
 
 
+# /board/{symbol}
 class BoardBySymbolApiResponse(BaseModel):
     class HeadBidAskDetail(BaseModel):
         Time: str  # 時刻
+
         Sign: str  # 気配フラグ
+
         Price: float  # 値段
         Qty: float  # 数量
 
@@ -154,9 +172,11 @@ class BoardBySymbolApiResponse(BaseModel):
     SecurityType: int  # 銘柄種別
 
 
+# /symbol/{symbol}
 class SymbolBySymbolApiResponse(BaseModel):
     Symbol: str  # 銘柄コード
     SymbolName: str  # 銘柄名
+
     DisplayName: str | None = None  # 銘柄略称
     Exchange: int | None = None  # 市場コード
     ExchangeName: str | None = None  # 市場名称
@@ -165,6 +185,7 @@ class SymbolBySymbolApiResponse(BaseModel):
     TotalStocks: float | None = None  # 発行済み株式数（千株）
     TradingUnit: float | None = None  # 売買単位
     FiscalYearEndBasic: int | None = None  # 決算期日
+
     PriceRangeGroup: str | None = None  # 呼値グループ
     KCMarginBuy: bool | None = None  # 一般信用買建フラグ
     KCMarginSell: bool | None = None  # 一般信用売建フラグ
@@ -181,6 +202,7 @@ class SymbolBySymbolApiResponse(BaseModel):
     ClearingPrice: float | None = None  # 清算値
 
 
+# /orders
 class OrderDetail(BaseModel):
     SeqNum: int
     Id: str  # 注文詳細番号
@@ -226,6 +248,7 @@ class OrdersApiResponse(RootModel[list[Order]]):
     pass
 
 
+# /positions
 class Position(BaseModel):
     ExecutionID: str | None = None  # 約定番号
     AccountType: int  # 口座種別
@@ -235,6 +258,7 @@ class Position(BaseModel):
     ExchangeName: str  # 市場名
     SecurityType: int  # 銘柄種別
     ExecutionDay: str | None = None  # 約定日（建玉日）
+
     Price: float  # 値段
     LeavesQty: float  # 残数量（保有数量）
     HoldQty: float  # 拘束数量（返済のために拘束されている数量）
@@ -254,27 +278,32 @@ class PositionsApiResponse(RootModel[list[Position]]):
     pass
 
 
+# /symbolname/future
 class SymbolnameFutureApiResponse(BaseModel):
     Symbol: str  # 銘柄コード
     SymbolName: str  # 銘柄名称
 
 
+# /symbolname/option
 class SymbolnameOptionApiResponse(BaseModel):
     Symbol: str  # 銘柄コード
     SymbolName: str  # 銘柄名称
 
 
+# /symbolname/minioptionweekly
 class SymbolnameMinioptionweeklyApiResponse(BaseModel):
     Symbol: str  # 銘柄コード
     SymbolName: str  # 銘柄名称
 
 
+# /ranking
 class RankTypeFor1To4(BaseModel):  # type: ignore
     No: Optional[int]  # 順位
     Trend: Literal["0", "1", "2", "3", "4", "5"]  # トレンド
     AverageRanking: float
     Symbol: str  # 銘柄コード
     SymbolName: str  # 銘柄名称
+
     CurrentPrice: float  # 現在値
     ChangeRatio: float  # 前日比
     ChangePercentage: float  # 騰落率(%)
@@ -282,6 +311,7 @@ class RankTypeFor1To4(BaseModel):  # type: ignore
     TradingVolume: float  # 売買高 (千株単位、百株の位を四捨五入)
     Turnover: float  # 売買代金 (百万円単位、十万円の位を四捨五入)
     ExchangeName: str  # 市場名
+
     CategoryName: str  # 業種名
 
 
@@ -412,6 +442,7 @@ class RankingApiResponse(BaseModel):
         return data
 
 
+# /exchange/{symbol}
 class ExchangeBySymbolApiResponse(BaseModel):
     Symbol: str  # 通貨
     BidPrice: float  # BID
@@ -421,6 +452,7 @@ class ExchangeBySymbolApiResponse(BaseModel):
     Time: str  # 時刻 (HH:mm:ss形式)
 
 
+# /regulations/{symbol}
 class RegulationsBySymbolApiResponse(BaseModel):
     class RegulationInfo(BaseModel):  # type: ignore
         Exchange: int  # 規制市場
@@ -435,32 +467,38 @@ class RegulationsBySymbolApiResponse(BaseModel):
     RegulationsInfo: list[RegulationInfo]  # 規制情報
 
 
+# /primaryexchange/{symbol}
 class PrimaryexchangeBySymbolApiResponse(BaseModel):
     Symbol: str  # 銘柄コード
     PrimaryExchange: int  # 優先市場
 
 
+# /apisoftlimit
 class ApisoftlimitApiResponse(BaseModel):
     Stock: float  # 現物のワンショット上限 (万円)
     Margin: float  # 信用のワンショット上限 (万円)
     Future: float  # 先物のワンショット上限 (枚)
     FutureMini: float  # ミニ先物のワンショット上限 (枚)
     FutureMicro: float  # マイクロ先物のワンショット上限 (枚)
+
     Option: float  # オプションのワンショット上限 (枚)
     MiniOption: float  # ミニオプションのワンショット上限 (枚)
-    kabuSVersion: str  # kabuステーションのバージョン
+    kabu_s_version: str  # kabuステーションのバージョン
 
 
+# /margin/marginpremium/{symbol}
 class MarginMarginpremiumBySymbolApiResponse(BaseModel):
     class GeneralMarginDetail(BaseModel):
         MarginPremiumType: int | None = None  # プレミアム料入力区分
         MarginPremium: float | None = None  # 確定プレミアム料
         UpperMarginPremium: float | None = None  # 上限プレミアム料
+
         LowerMarginPremium: float | None = None  # 下限プレミアム料
         TickMarginPremium: float | None = None  # プレミアム料刻値
 
     class DayTradeDetail(BaseModel):
         MarginPremiumType: int | None = None  # プレミアム料入力区分
+
         MarginPremium: float | None = None  # 確定プレミアム料
         UpperMarginPremium: float | None = None  # 上限プレミアム料
         LowerMarginPremium: float | None = None  # 下限プレミアム料
