@@ -3,9 +3,9 @@ from typing import Any, Dict, List, Literal, Optional, Type, TypeVar
 from urllib.parse import urlencode
 
 import requests
-from const import ApiCategory, ApiResultCategory
+from .const import ApiCategory, ApiResultCategory
 from pydantic import BaseModel
-from response_model import (
+from .response_model import (
     ApiErrorResponse,
     ApiResultApiError,
     ApiResultHttpError,

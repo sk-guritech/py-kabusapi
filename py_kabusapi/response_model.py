@@ -1,6 +1,6 @@
-from typing import Literal, Optional, TypeVar, cast
+from typing import Generic, Literal, Optional, TypeVar, cast
 
-from const import ApiResultCategory
+from .const import ApiResultCategory
 from pydantic import BaseModel, RootModel, model_validator
 
 T = TypeVar("T", bound=BaseModel)
@@ -15,7 +15,7 @@ class ApiErrorResponse(BaseModel):
     ResultCode: int  # エラーコード
 
 
-class ApiResultSuccess[T](BaseModel):
+class ApiResultSuccess(BaseModel, Generic[T]):
     api_result_category: Literal[ApiResultCategory.SUCCESS] = ApiResultCategory.SUCCESS
     content: T
 
