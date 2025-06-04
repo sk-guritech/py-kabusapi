@@ -161,20 +161,20 @@ class KabuStationAPI:
     def sendorder(
         self,
         symbol: str,
-        exchange: Literal[1, 3, 5, 6, 9, 27],
-        security_type: Literal[1],
+        exchange: Literal["1", "3", "5", "6", "9", "27"],
+        security_type: Literal["1"],
         side: Literal["1", "2"],
-        cash_margin: Literal[1, 2, 3],
-        deliv_type: Literal[0, 2, 3],
-        account_type: Literal[2, 4, 12],
+        cash_margin: Literal["1", "2", "3"],
+        deliv_type: Literal["0", "2", "3"],
+        account_type: Literal["2", "4", "12"],
         qty: int,
         price: float,
         expire_day: int,
-        front_order_type: Literal[10, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26, 27, 30],
-        margin_trade_type: Optional[Literal[1, 2, 3]] = None,
+        front_order_type: Literal["10", "13", "14", "15", "16", "17", "20", "21", "22", "23", "24", "25", "26", "27", "30"],
+        margin_trade_type: Optional[Literal["1", "2", "3"]] = None,
         margin_premium_unit: Optional[float] = None,
         fund_type: Optional[Literal["  ", "02", "AA", "11"]] = None,
-        close_position_order: Optional[Literal[0, 1, 2, 3, 4, 5, 6, 7]] = None,
+        close_position_order: Optional[Literal["0", "1", "2", "3", "4", "5", "6", "7"]] = None,
         close_positions: Optional[List[Dict[str, Any]]] = None,
         reverse_limit_order: Optional[Dict[str, Any]] = None,
     ):
@@ -186,42 +186,42 @@ class KabuStationAPI:
 
         Args:
             symbol (str): 銘柄コード
-            exchange (Literal[1, 3, 5, 6, 9, 27]): 市場コード
-            security_type (Literal[1]): 商品種別
+            exchange (Literal["1", "3", "5", "6", "9", "27"]): 市場コード
+            security_type (Literal["1"]): 商品種別
             side (Literal["1", "2"]): 売買区分
-            cash_margin (Literal[1, 2, 3]): 信用区分
-            deliv_type (Literal[0, 2, 3]): 受渡区分
-            account_type (Literal[2, 4, 12]): 口座種別
+            cash_margin (Literal["1", "2", "3"]): 信用区分
+            deliv_type (Literal["0", "2", "3"]): 受渡区分
+            account_type (Literal["2", "4", "12"]): 口座種別
             qty (int): 注文数量
             price (float): 注文価格
             expire_day (int): 注文有効期限
-            front_order_type (Literal[10, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26, 27, 30]): 執行条件
-            margin_trade_type (Optional[Literal[1, 2, 3]], optional): 信用取引区分
+            front_order_type (Literal["10", "13", "14", "15", "16", "17", "20", "21", "22", "23", "24", "25", "26", "27", "30"]): 執行条件
+            margin_trade_type (Optional[Literal["1", "2", "3"]], optional): 信用取引区分
             margin_premium_unit (Optional[float], optional): １株あたりのプレミアム料(円)
             fund_type (Optional[Literal["  ", "02", "AA", "11"]], optional): 資産区分（預り区分）
-            close_position_order (Optional[Literal[0, 1, 2, 3, 4, 5, 6, 7]], optional): 決済順序
+            close_position_order (Optional[Literal["0", "1", "2", "3", "4", "5", "6", "7"]], optional): 決済順序
             close_positions (Optional[List[Dict[str, any]]], optional): 返済建玉指定のリスト
             reverse_limit_order (Optional[Dict[str, any]]], optional): 逆指値条件
         """
         payload = {
             "Symbol": symbol,
-            "Exchange": exchange,
-            "SecurityType": security_type,
+            "Exchange": int(exchange),
+            "SecurityType": int(security_type),
             "Side": side,
-            "CashMargin": cash_margin,
-            "DelivType": deliv_type,
-            "AccountType": account_type,
+            "CashMargin": int(cash_margin),
+            "DelivType": int(deliv_type),
+            "AccountType": int(account_type),
             "Qty": qty,
             "Price": price,
             "ExpireDay": expire_day,
-            "FrontOrderType": front_order_type,
+            "FrontOrderType": int(front_order_type),
         }
 
         optional_payload = {
-            "MarginTradeType": margin_trade_type,
+            "MarginTradeType": int(margin_trade_type) if margin_trade_type is not None else None,
             "MarginPremiumUnit": margin_premium_unit,
             "FundType": fund_type,
-            "ClosePositionOrder": close_position_order,
+            "ClosePositionOrder": int(close_position_order) if close_position_order is not None else None,
             "ClosePositions": close_positions,
             "ReverseLimitOrder": reverse_limit_order,
         }
@@ -237,15 +237,15 @@ class KabuStationAPI:
     def sendorder_future(
         self,
         symbol: str,
-        exchange: int,
-        trade_type: int,
-        time_in_force: int,
+        exchange: Literal["2", "17", "18"],
+        trade_type: Literal["1", "2"],
+        time_in_force: Literal["1", "2", "3"],
         side: str,
         qty: int,
         price: float,
         expire_day: int,
-        front_order_type: int,
-        close_position_order: Optional[int] = None,
+        front_order_type: Literal["120", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130"],
+        close_position_order: Optional[Literal["0", "1", "2"]] = None,
         close_positions: Optional[List[Dict[str, Any]]] = None,
         reverse_limit_order: Optional[Dict[str, Any]] = None,
     ):
@@ -257,32 +257,32 @@ class KabuStationAPI:
 
         Args:
             symbol (str): 銘柄コード
-            exchange (int): 市場コード
-            trade_type (int): 取引区分
-            time_in_force (int): 有効期間条件
+            exchange (Literal["2", "17", "18"]): 市場コード
+            trade_type (Literal["1", "2"]): 取引区分
+            time_in_force (Literal["1", "2", "3"]): 有効期間条件
             side (str): 売買区分
             qty (int): 注文数量
             price (float): 注文価格
             expire_day (int): 注文有効期限 (yyyyMMdd形式)
-            front_order_type (int): 執行条件
-            close_position_order (int, optional): 決済順序
+            front_order_type (Literal["120", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130"]): 執行条件
+            close_position_order (Literal["0", "1", "2"], optional): 決済順序
             close_positions (list, optional): 返済建玉指定
             reverse_limit_order (dict, optional): 逆指値条件
         """
         payload = {
             "Symbol": symbol,
-            "Exchange": exchange,
-            "TradeType": trade_type,
-            "TimeInForce": time_in_force,
+            "Exchange": int(exchange),
+            "TradeType": int(trade_type),
+            "TimeInForce": int(time_in_force),
             "Side": side,
             "Qty": qty,
             "Price": price,
             "ExpireDay": expire_day,
-            "FrontOrderType": front_order_type,
+            "FrontOrderType": int(front_order_type),
         }
 
         optional_payload = {
-            "ClosePositionOrder": close_position_order,
+            "ClosePositionOrder": int(close_position_order) if close_position_order is not None else None,
             "ClosePositions": close_positions,
             "ReverseLimitOrder": reverse_limit_order,
         }
@@ -298,15 +298,15 @@ class KabuStationAPI:
     def sendorder_option(
         self,
         symbol: str,
-        exchange: int,
-        trade_type: int,
-        time_in_force: int,
+        exchange: Literal["2", "17", "18"],
+        trade_type: Literal["1", "2"],
+        time_in_force: Literal["1", "2", "3"],
         side: str,
         qty: int,
         price: float,
         expire_day: int,
-        front_order_type: int,
-        close_position_order: Optional[int] = None,
+        front_order_type: Literal["120", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130"],
+        close_position_order: Optional[Literal["0", "1", "2"]] = None,
         close_positions: Optional[List[Dict[str, Any]]] = None,
         reverse_limit_order: Optional[Dict[str, Any]] = None,
     ):
@@ -318,32 +318,32 @@ class KabuStationAPI:
 
         Args:
             symbol (str): 銘柄コード
-            exchange (int): 市場コード
-            trade_type (int): 取引区分
-            time_in_force (int): 有効期間条件
+            exchange (Literal["2", "17", "18"]): 市場コード
+            trade_type (Literal["1", "2"]): 取引区分
+            time_in_force (Literal["1", "2", "3"]): 有効期間条件
             side (str): 売買区分
             qty (int): 注文数量
             price (float): 注文価格
             expire_day (int): 注文有効期限 (yyyyMMdd形式)
-            front_order_type (int): 執行条件
-            close_position_order (int, optional): 決済順序
+            front_order_type (Literal["120", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130"]): 執行条件
+            close_position_order (Literal["0", "1", "2"], optional): 決済順序
             close_positions (list, optional): 返済建玉指定
             reverse_limit_order (dict, optional): 逆指値条件
         """
         payload = {
             "Symbol": symbol,
-            "Exchange": exchange,
-            "TradeType": trade_type,
-            "TimeInForce": time_in_force,
+            "Exchange": int(exchange),
+            "TradeType": int(trade_type),
+            "TimeInForce": int(time_in_force),
             "Side": side,
             "Qty": qty,
             "Price": price,
             "ExpireDay": expire_day,
-            "FrontOrderType": front_order_type,
+            "FrontOrderType": int(front_order_type),
         }
 
         optional_payload = {
-            "ClosePositionOrder": close_position_order,
+            "ClosePositionOrder": int(close_position_order) if close_position_order is not None else None,
             "ClosePositions": close_positions,
             "ReverseLimitOrder": reverse_limit_order,
         }
