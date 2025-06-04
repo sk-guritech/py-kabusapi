@@ -20,19 +20,19 @@ def test_api():
         print("✓ wallet_cash test passed")
     except Exception as e:
         print(f"✗ wallet_cash test failed: {e}")
-    
+
     try:
         api.wallet_cash_by_symbol("7974@1")
         print("✓ wallet_cash_by_symbol test passed")
     except Exception as e:
         print(f"✗ wallet_cash_by_symbol test failed: {e}")
-    
+
     try:
         api.wallet_margin()
         print("✓ wallet_margin test passed")
     except Exception as e:
         print(f"✗ wallet_margin test failed: {e}")
-    
+
     try:
         api.wallet_margin_by_symbol("5905@27")
         print("✓ wallet_margin_by_symbol test passed")
@@ -43,19 +43,19 @@ def test_api():
 def test_commented_features():
     """Test features that are currently commented out."""
     api = KabuStationAPI(is_in_docker_container=True, environment="production")
-    
+
     # ORDER_PLACEMENT
     # api.sendorder()
     # api.sendorder_future()
     # api.sendorder_option()
     # api.cancelorder()
-    
+
     # TRADING_CAPACITY (additional)
     # api.wallet_future()
     # api.wallet_future_by_symbol("160060018@23")
     # api.wallet_option()
     # api.wallet_option_by_symbol("140248026@23")
-    
+
     # INFORMATION
     # api.board_by_symbol("8697@1")
     # api.symbol_by_symbol("8697@1", True)

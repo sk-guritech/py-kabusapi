@@ -2,13 +2,13 @@
 """Simple import test that doesn't require dependencies."""
 
 import sys
-import importlib.util
+
 
 def test_syntax_only():
     """Test that all Python files have valid syntax."""
-    import os
     import ast
-    
+    import os
+
     errors = []
     for root, dirs, files in os.walk("py_kabusapi"):
         for file in files:
@@ -21,13 +21,14 @@ def test_syntax_only():
                 except SyntaxError as e:
                     errors.append(f"✗ {filepath}: {e}")
                     print(errors[-1])
-    
+
     if errors:
         print(f"\nFound {len(errors)} syntax errors")
         return False
     else:
         print(f"\n✓ All files have valid syntax for Python {sys.version.split()[0]}")
         return True
+
 
 if __name__ == "__main__":
     success = test_syntax_only()

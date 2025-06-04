@@ -1,7 +1,8 @@
 from typing import Generic, Literal, Optional, TypeVar, cast
 
-from .const import ApiResultCategory
 from pydantic import BaseModel, RootModel, model_validator
+
+from .const import ApiResultCategory
 
 T = TypeVar("T", bound=BaseModel)
 

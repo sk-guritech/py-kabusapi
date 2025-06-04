@@ -1,3 +1,3 @@
 from .api import KabuStationAPI
 
-__all__ = ['KabuStationAPI']
+__all__ = ["KabuStationAPI"]
