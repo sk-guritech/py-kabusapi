@@ -21,6 +21,7 @@ from .response_model import (
     PositionsApiResponse,
     PrimaryexchangeBySymbolApiResponse,
     RankingApiResponse,
+    RegisterApiResponse,
     RegulationsBySymbolApiResponse,
     SendorderApiResponse,
     SendorderFutureApiResponse,
@@ -30,6 +31,8 @@ from .response_model import (
     SymbolnameMinioptionweeklyApiResponse,
     SymbolnameOptionApiResponse,
     TokenApiResponse,
+    UnregisterAllApiResponse,
+    UnregisterApiResponse,
     WalletCashApiResponse,
     WalletCashBySymbolApiResponse,
     WalletFutureApiResponse,
@@ -681,3 +684,46 @@ class KabuStationAPI:
         return self.call_api(
             f"margin/marginpremium/{symbol}", ApiCategory.INFORMATION, "GET", MarginMarginpremiumBySymbolApiResponse
         )
+
+    def register(self, symbols: List[Dict[str, Any]]):
+        """
+        PUSH配信する銘柄を登録します。
+        API登録銘柄リストを開くには、kabuステーションAPIインジケーターを右クリックし「API登録銘柄リスト」を選択してください。
+
+        Args:
+            symbols (List[Dict[str, Any]]): 登録する銘柄のリスト
+                各銘柄は以下の形式:
+                {
+                    "Symbol": "9433",  # 銘柄コード
+                    "Exchange": 1      # 市場コード
+                }
+        """
+        payload = {"Symbols": symbols}
+
+        return self.call_api("register", ApiCategory.STOCK_REGISTRATION, "PUT", RegisterApiResponse, payload)
+
+    def unregister(self, symbols: List[Dict[str, Any]]):
+        """
+        API登録銘柄リストに登録されている銘柄を解除します
+
+        Args:
+            symbols (List[Dict[str, Any]]): 登録解除する銘柄のリスト
+                各銘柄は以下の形式:
+                {
+                    "Symbol": "9433",  # 銘柄コード
+                    "Exchange": 1      # 市場コード
+                }
+                
+        Note:
+            為替銘柄を登録する場合、銘柄名は"通貨A" + "/" + "通貨B"、市場コードは"300"で指定してください。
+            例：'Symbol': 'EUR/USD', "Exchange": 300
+        """
+        payload = {"Symbols": symbols}
+
+        return self.call_api("unregister", ApiCategory.STOCK_REGISTRATION, "PUT", UnregisterApiResponse, payload)
+
+    def unregister_all(self):
+        """
+        API登録銘柄リストに登録されている銘柄をすべて解除します
+        """
+        return self.call_api("unregister/all", ApiCategory.STOCK_REGISTRATION, "PUT", UnregisterAllApiResponse)

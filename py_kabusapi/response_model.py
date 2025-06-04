@@ -535,3 +535,20 @@ class MarginMarginpremiumBySymbolApiResponse(BaseModel):
     Symbol: str  # 銘柄コード
     GeneralMargin: GeneralMarginDetail  # 一般信用(長期)
     DayTrade: DayTradeDetail  # 一般信用(デイトレ)
+
+
+class RegistListItem(BaseModel):
+    Symbol: str  # 銘柄コード
+    Exchange: int  # 市場コード
+
+
+class RegisterApiResponse(BaseModel):
+    RegistList: list[RegistListItem]  # 現在登録されている銘柄のリスト
+
+
+class UnregisterApiResponse(BaseModel):
+    RegistList: list[RegistListItem]  # 現在登録されている銘柄のリスト
+
+
+class UnregisterAllApiResponse(BaseModel):
+    RegistList: list[RegistListItem]  # 現在登録されている銘柄のリスト
