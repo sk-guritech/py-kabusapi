@@ -687,16 +687,13 @@ class KabuStationAPI:
 
     def register(self, symbols: List[Dict[str, Any]]):
         """
+        ```
         PUSH配信する銘柄を登録します。
         API登録銘柄リストを開くには、kabuステーションAPIインジケーターを右クリックし「API登録銘柄リスト」を選択してください。
+        ```
 
         Args:
             symbols (List[Dict[str, Any]]): 登録する銘柄のリスト
-                各銘柄は以下の形式:
-                {
-                    "Symbol": "9433",  # 銘柄コード
-                    "Exchange": 1      # 市場コード
-                }
         """
         payload = {"Symbols": symbols}
 
@@ -704,19 +701,14 @@ class KabuStationAPI:
 
     def unregister(self, symbols: List[Dict[str, Any]]):
         """
+        ```
         API登録銘柄リストに登録されている銘柄を解除します
+        ※為替銘柄を登録する場合、銘柄名は"通貨A" + "/" + "通貨B"、市場コードは"300"で指定してください。
+        例：'Symbol': 'EUR/USD', "Exchange": 300
+        ```
 
         Args:
             symbols (List[Dict[str, Any]]): 登録解除する銘柄のリスト
-                各銘柄は以下の形式:
-                {
-                    "Symbol": "9433",  # 銘柄コード
-                    "Exchange": 1      # 市場コード
-                }
-                
-        Note:
-            為替銘柄を登録する場合、銘柄名は"通貨A" + "/" + "通貨B"、市場コードは"300"で指定してください。
-            例：'Symbol': 'EUR/USD', "Exchange": 300
         """
         payload = {"Symbols": symbols}
 
