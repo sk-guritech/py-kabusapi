@@ -10,7 +10,8 @@ dependencies = [
     "requests",
     "ipython",
     "ruff",
-    "pydantic"
+    "pydantic",
+    "websocket-client"
 ]
 
 [tool.ruff]

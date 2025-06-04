@@ -1,8 +1,10 @@
 import json
-from typing import Any, Dict, List, Literal, Optional, Type, TypeVar
+import threading
+from typing import Any, Callable, Dict, List, Literal, Optional, Type, TypeVar
 from urllib.parse import urlencode
 
 import requests
+import websocket as ws
 from pydantic import BaseModel
 
 from .const import ApiCategory, ApiResultCategory
@@ -41,6 +43,7 @@ from .response_model import (
     WalletMarginBySymbolApiResponse,
     WalletOptionApiResponse,
     WalletOptionBySymbolApiResponse,
+    WebSocketPushData,
 )
 
 T = TypeVar("T", bound=BaseModel)
@@ -69,6 +72,27 @@ class KabuStationAPI:
         self.is_in_docker_container = is_in_docker_container
         self.base_url = __generate_base_url(host_name, environment, is_in_docker_container)
         self.x_api_key: str | None = None
+        self.websocket_url = self._generate_websocket_url(host_name, environment, is_in_docker_container)
+        self.ws: ws.WebSocketApp | None = None
+        self.ws_thread: threading.Thread | None = None
+        self.on_message_callback: Callable[[WebSocketPushData], None] | None = None
+        self.on_error_callback: Callable[[Exception], None] | None = None
+        self.on_connect_callback: Callable[[], None] | None = None
+        self.on_disconnect_callback: Callable[[], None] | None = None
+
+    def _generate_websocket_url(
+        self, host_name: str, environment: Literal["test"] | Literal["production"], is_in_docker_container: bool
+    ) -> str:
+        """WebSocket接続用URLを生成"""
+        if environment == "test":
+            port = 18081
+        else:
+            port = 18080
+
+        if is_in_docker_container:
+            host_name = "host.docker.internal"
+
+        return f"ws://{host_name}:{port}/kabusapi/websocket"
 
     def call_api(
         self, path: str, api_category: ApiCategory, method: str, api_response_basemodel: Type[T], payload={}
@@ -719,3 +743,105 @@ class KabuStationAPI:
         API登録銘柄リストに登録されている銘柄をすべて解除します
         """
         return self.call_api("unregister/all", ApiCategory.STOCK_REGISTRATION, "PUT", UnregisterAllApiResponse)
+
+    def start_websocket(
+        self,
+        on_message: Callable[[WebSocketPushData], None] | None = None,
+        on_error: Callable[[Exception], None] | None = None,
+        on_connect: Callable[[], None] | None = None,
+        on_disconnect: Callable[[], None] | None = None,
+    ):
+        """
+        ```
+        WebSocket接続を開始し、リアルタイム市場データの受信を開始します。
+        事前にregister()で銘柄を登録してください。
+        ```
+
+        Args:
+            on_message: データ受信時のコールバック関数
+            on_error: エラー発生時のコールバック関数
+            on_connect: 接続完了時のコールバック関数
+            on_disconnect: 切断時のコールバック関数
+        """
+        if not self.x_api_key:
+            raise ValueError("API token is not set. Call 'token' method first.")
+
+        if self.ws is not None:
+            raise ValueError("WebSocket is already connected. Call 'stop_websocket' first.")
+
+        self.on_message_callback = on_message
+        self.on_error_callback = on_error
+        self.on_connect_callback = on_connect
+        self.on_disconnect_callback = on_disconnect
+
+        def on_ws_message(ws, message):  # noqa: ARG001
+            try:
+                data = json.loads(message)
+                push_data = WebSocketPushData(**data)
+                if self.on_message_callback:
+                    self.on_message_callback(push_data)
+            except Exception as e:
+                if self.on_error_callback:
+                    self.on_error_callback(e)
+
+        def on_ws_error(ws, error):  # noqa: ARG001
+            if self.on_error_callback:
+                self.on_error_callback(error)
+
+        def on_ws_open(ws):  # noqa: ARG001
+            if self.on_connect_callback:
+                self.on_connect_callback()
+
+        def on_ws_close(ws, close_status_code, close_msg):  # noqa: ARG001
+            if self.on_disconnect_callback:
+                self.on_disconnect_callback()
+
+        headers = {"X-API-KEY": self.x_api_key}
+        if self.is_in_docker_container:
+            headers["Host"] = "localhost"
+
+        self.ws = ws.WebSocketApp(
+            self.websocket_url,
+            header=headers,
+            on_message=on_ws_message,
+            on_error=on_ws_error,
+            on_open=on_ws_open,
+            on_close=on_ws_close,
+        )
+
+        self.ws_thread = threading.Thread(target=self.ws.run_forever)
+        self.ws_thread.daemon = True
+        self.ws_thread.start()
+
+    def stop_websocket(self):
+        """
+        WebSocket接続を停止します
+        """
+        if self.ws is not None:
+            self.ws.close()
+            self.ws = None
+
+        if self.ws_thread is not None:
+            self.ws_thread.join(timeout=5)
+            self.ws_thread = None
+
+    def is_websocket_connected(self) -> bool:
+        """
+        WebSocket接続状態を確認します
+
+        Returns:
+            bool: 接続中の場合True
+        """
+        return self.ws is not None and self.ws_thread is not None and self.ws_thread.is_alive()
+
+    def send_websocket_message(self, message: str):
+        """
+        WebSocket経由でメッセージを送信します
+
+        Args:
+            message (str): 送信するメッセージ
+        """
+        if self.ws is None:
+            raise ValueError("WebSocket is not connected. Call 'start_websocket' first.")
+
+        self.ws.send(message)
