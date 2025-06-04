@@ -240,7 +240,7 @@ class KabuStationAPI:
         exchange: Literal["2", "17", "18"],
         trade_type: Literal["1", "2"],
         time_in_force: Literal["1", "2", "3"],
-        side: str,
+        side: Literal["1", "2"],
         qty: int,
         price: float,
         expire_day: int,
@@ -260,7 +260,7 @@ class KabuStationAPI:
             exchange (Literal["2", "17", "18"]): 市場コード
             trade_type (Literal["1", "2"]): 取引区分
             time_in_force (Literal["1", "2", "3"]): 有効期間条件
-            side (str): 売買区分
+            side (Literal["1", "2"]): 売買区分
             qty (int): 注文数量
             price (float): 注文価格
             expire_day (int): 注文有効期限 (yyyyMMdd形式)
@@ -301,7 +301,7 @@ class KabuStationAPI:
         exchange: Literal["2", "17", "18"],
         trade_type: Literal["1", "2"],
         time_in_force: Literal["1", "2", "3"],
-        side: str,
+        side: Literal["1", "2"],
         qty: int,
         price: float,
         expire_day: int,
@@ -321,7 +321,7 @@ class KabuStationAPI:
             exchange (Literal["2", "17", "18"]): 市場コード
             trade_type (Literal["1", "2"]): 取引区分
             time_in_force (Literal["1", "2", "3"]): 有効期間条件
-            side (str): 売買区分
+            side (Literal["1", "2"]): 売買区分
             qty (int): 注文数量
             price (float): 注文価格
             expire_day (int): 注文有効期限 (yyyyMMdd形式)
