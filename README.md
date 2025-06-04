@@ -37,26 +37,38 @@ api = KabuStationAPI()
 
 ## テスト
 
+### テスト実行方法
+
+開発環境でのテスト実行は以下の方法を推奨します：
+
+```bash
+# プロジェクトルートディレクトリから実行
+PYTHONPATH=. python tests/test_api.py
+PYTHONPATH=. python tests/test_import.py
+```
+
 ### APIテストの実行
 
 ```bash
-python tests/test_api.py
+# 基本的なAPIテスト
+PYTHONPATH=. python tests/test_api.py
 ```
 
-注意: テストを実行するには、localhost:18081でkabuステーション APIサーバーが動作している必要があります。
+注意: テストを実行するには、localhost:18080 (production) または localhost:18081 (test) でkabuステーション APIサーバーが動作している必要があります。
 
 ### インポートテスト
 
 Python 3.10～3.12でのインポートテストを実行:
 
 ```bash
-# 単一バージョンでテスト
-python tests/test_import.py
+# インポートテスト
+PYTHONPATH=. python tests/test_import.py
 
 # 複数バージョンでテスト (toxを使用)
 pip install tox
 tox
 ```
+
 
 ### CI/CD
 
