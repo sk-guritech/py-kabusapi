@@ -552,3 +552,68 @@ class UnregisterApiResponse(BaseModel):
 
 class UnregisterAllApiResponse(BaseModel):
     RegistList: list[RegistListItem]  # 現在登録されている銘柄のリスト
+
+
+class WebSocketBidAsk(BaseModel):
+    Price: float  # 価格
+    Qty: int  # 数量
+
+
+class WebSocketPushData(BaseModel):
+    Symbol: str  # 銘柄コード
+    SymbolName: str | None = None  # 銘柄名
+    Exchange: int  # 市場コード
+    ExchangeName: str | None = None  # 市場名
+    CurrentPrice: float | None = None  # 現在値
+    CurrentPriceTime: str | None = None  # 現在値時刻
+    CurrentPriceChangeStatus: str | None = None  # 現在値前値比較
+    CurrentPriceStatus: int | None = None  # 現在値ステータス
+    CalcPrice: float | None = None  # 計算用現在値
+    PreviousClose: float | None = None  # 前日終値
+    PreviousCloseTime: str | None = None  # 前日終値日付
+    ChangePreviousClose: float | None = None  # 前日比
+    ChangePreviousClosePer: float | None = None  # 前日比（%）
+    OpeningPrice: float | None = None  # 始値
+    OpeningPriceTime: str | None = None  # 始値時刻
+    HighPrice: float | None = None  # 高値
+    HighPriceTime: str | None = None  # 高値時刻
+    LowPrice: float | None = None  # 安値
+    LowPriceTime: str | None = None  # 安値時刻
+    TradingVolume: float | None = None  # 売買高
+    TradingVolumeTime: str | None = None  # 売買高時刻
+    VWAP: float | None = None  # VWAP
+    TradingValue: float | None = None  # 売買代金
+    BidQty: float | None = None  # 買い数量（最良気配）
+    BidPrice: float | None = None  # 買い値段（最良気配）
+    BidTime: str | None = None  # 買い時刻（最良気配）
+    BidSign: str | None = None  # 買い気配値表示色
+    MarketOrderSellQty: float | None = None  # 売り成行数量
+    Sell1: WebSocketBidAsk | None = None  # 売気配数量1
+    Sell2: WebSocketBidAsk | None = None  # 売気配数量2
+    Sell3: WebSocketBidAsk | None = None  # 売気配数量3
+    Sell4: WebSocketBidAsk | None = None  # 売気配数量4
+    Sell5: WebSocketBidAsk | None = None  # 売気配数量5
+    Sell6: WebSocketBidAsk | None = None  # 売気配数量6
+    Sell7: WebSocketBidAsk | None = None  # 売気配数量7
+    Sell8: WebSocketBidAsk | None = None  # 売気配数量8
+    Sell9: WebSocketBidAsk | None = None  # 売気配数量9
+    Sell10: WebSocketBidAsk | None = None  # 売気配数量10
+    AskQty: float | None = None  # 売り数量（最良気配）
+    AskPrice: float | None = None  # 売り値段（最良気配）
+    AskTime: str | None = None  # 売り時刻（最良気配）
+    AskSign: str | None = None  # 売り気配値表示色
+    MarketOrderBuyQty: float | None = None  # 買い成行数量
+    Buy1: WebSocketBidAsk | None = None  # 買気配数量1
+    Buy2: WebSocketBidAsk | None = None  # 買気配数量2
+    Buy3: WebSocketBidAsk | None = None  # 買気配数量3
+    Buy4: WebSocketBidAsk | None = None  # 買気配数量4
+    Buy5: WebSocketBidAsk | None = None  # 買気配数量5
+    Buy6: WebSocketBidAsk | None = None  # 買気配数量6
+    Buy7: WebSocketBidAsk | None = None  # 買気配数量7
+    Buy8: WebSocketBidAsk | None = None  # 買気配数量8
+    Buy9: WebSocketBidAsk | None = None  # 買気配数量9
+    Buy10: WebSocketBidAsk | None = None  # 買気配数量10
+    OverSellQty: float | None = None  # 売買高加重平均価格(VWAP)
+    UnderBuyQty: float | None = None  # 売買高加重平均価格(VWAP)
+    TotalMarketValue: float | None = None  # 時価総額
+    SecurityType: int | None = None  # 商品種別
