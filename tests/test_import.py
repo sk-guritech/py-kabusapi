@@ -9,11 +9,21 @@ def test_import():
     try:
         from py_kabusapi import KabuStationAPI
 
+        # インポートをテストするため、クラスが存在することを確認
+        assert KabuStationAPI is not None
+
         print(f"✓ Python {sys.version.split()[0]}: Import successful")
-        return True
+        # pytest用はassertのみ、スタンドアロン用はreturnも必要
+        if __name__ != "__main__":
+            assert True
+        else:
+            return True
     except ImportError as e:
         print(f"✗ Python {sys.version.split()[0]}: Import failed - {e}")
-        return False
+        if __name__ != "__main__":
+            assert False, f"Import failed: {e}"
+        else:
+            return False
 
 
 if __name__ == "__main__":

@@ -26,8 +26,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install -e .
     
-    - name: Test syntax
-      run: python tests/test_simple_import.py
-    
     - name: Test import
       run: python tests/test_import.py
+    
+    - name: Run pytest
+      run: pytest tests/ -v -m "not api_integration"
