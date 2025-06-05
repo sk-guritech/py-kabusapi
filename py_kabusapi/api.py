@@ -173,7 +173,9 @@ class KabuStationAPI:
         qty: int,
         price: float,
         expire_day: int,
-        front_order_type: Literal["10", "13", "14", "15", "16", "17", "20", "21", "22", "23", "24", "25", "26", "27", "30"],
+        front_order_type: Literal[
+            "10", "13", "14", "15", "16", "17", "20", "21", "22", "23", "24", "25", "26", "27", "30"
+        ],
         margin_trade_type: Optional[Literal["1", "2", "3"]] = None,
         margin_premium_unit: Optional[float] = None,
         fund_type: Optional[Literal["  ", "02", "AA", "11"]] = None,

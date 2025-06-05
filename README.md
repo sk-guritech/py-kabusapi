@@ -75,40 +75,59 @@ cash_info = api.wallet_cash()
 
 ### テスト実行方法
 
-開発環境でのテスト実行は以下の方法を推奨します：
-
+#### 基本テスト（推奨）
 ```bash
-# プロジェクトルートディレクトリから実行
-PYTHONPATH=. python tests/test_api.py
-PYTHONPATH=. python tests/test_import.py
+# インポートテストのみ実行（API接続不要）
+pytest tests/ -v -m "not api_integration"
 ```
 
-### APIテストの実行
-
+#### 包括的API統合テスト
 ```bash
-# 基本的なAPIテスト
-PYTHONPATH=. python tests/test_api.py
+# 環境変数を設定
+export KABUS_HOST=localhost
+export KABUS_ENV=production
+export KABUS_DOCKER=true
+export KABUS_PASSWORD=your_api_password
+
+# API統合テストを実行（25のAPIエンドポイントをテスト）
+pytest tests/ -v -m "api_integration"
 ```
 
-注意: テストを実行するには、localhost:18080 (production) または localhost:18081 (test) でkabuステーション APIサーバーが動作している必要があります。
+⚠️ **セキュリティ注意事項:**
+- **本番用パスワードをテストに使用しない**でください
+- テスト専用のAPIパスワードを設定することを強く推奨します
+- パスワードをソースコードやログに含めないよう注意してください
 
-### インポートテスト
-
-Python 3.10～3.12でのインポートテストを実行:
-
+#### 全テスト実行
 ```bash
-# インポートテスト
-PYTHONPATH=. python tests/test_import.py
-
-# 複数バージョンでテスト (toxを使用)
-pip install tox
-tox
+# 全てのテストを実行
+pytest tests/ -v
 ```
 
+### テスト種別
+
+#### インポートテスト
+- パッケージのインポート可能性をテスト
+- CI/CDで自動実行
+- API接続不要
+
+#### API統合テスト
+- 25のAPIエンドポイントを包括的にテスト
+- 適切なレート制限を実装（発注API: 5件/秒、その他: 10件/秒）
+- production環境では発注APIを自動スキップ
+- 実際のkabuステーション接続が必要
+
+### 要件
+
+API統合テストの実行には以下が必要です：
+- kabuステーションの起動（localhost:18080 for production / localhost:18081 for test）
+- 有効なAPIパスワード
+
+詳細な情報は [tests/README_API_TESTS.md](./tests/README_API_TESTS.md) を参照してください。
 
 ### CI/CD
 
-GitHub Actionsで自動的にPython 3.10, 3.11, 3.12でのインポートテストが実行されます。
+GitHub Actionsで自動的にPython 3.10, 3.11, 3.12でのインポートテストが実行されます（API統合テストは除外）。
 
 ## 関連リンク
 

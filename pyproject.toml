@@ -10,7 +10,8 @@ dependencies = [
     "requests",
     "ipython",
     "ruff",
-    "pydantic"
+    "pydantic",
+    "pytest"
 ]
 
 [tool.ruff]
@@ -18,3 +19,25 @@ line-length = 120
 
 [tool.ruff.lint]
 select = ["I", "N", "F401"]
+
+[tool.ruff.lint.per-file-ignores]
+"py_kabusapi/response_model.py" = ["N815"]  # Allow mixedCase for API response fields
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+    "--strict-config",
+    "--disable-warnings",
+]
+markers = [
+    "production: tests for production environment",
+    "order_api: tests for order APIs (potentially dangerous)",
+    "slow: tests that take longer than usual",
+    "api_integration: tests that require actual API connection",
+]
