@@ -87,7 +87,7 @@ class TestRestApi:
         result = self.api_call_with_rate_limit(
             api_client.board_by_symbol, self.OTHER_API_DELAY, symbol=self.TEST_SYMBOL
         )
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.prod_env
     def test_03_symbol_by_symbol(self, api_client):
@@ -95,21 +95,21 @@ class TestRestApi:
         result = self.api_call_with_rate_limit(
             api_client.symbol_by_symbol, self.OTHER_API_DELAY, symbol=self.TEST_SYMBOL
         )
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.test_env
     @pytest.mark.prod_env
     def test_04_orders(self, api_client):
         """Test orders list API"""
         result = self.api_call_with_rate_limit(api_client.orders, self.OTHER_API_DELAY)
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.test_env
     @pytest.mark.prod_env
     def test_05_positions(self, api_client):
         """Test positions list API"""
         result = self.api_call_with_rate_limit(api_client.positions, self.OTHER_API_DELAY)
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.test_env
     @pytest.mark.prod_env
@@ -121,7 +121,7 @@ class TestRestApi:
             type="1",  # Price increase rate ranking
             exchange_division="ALL",
         )
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.prod_env
     def test_07_regulations_by_symbol(self, api_client):
@@ -129,7 +129,7 @@ class TestRestApi:
         result = self.api_call_with_rate_limit(
             api_client.regulations_by_symbol, self.OTHER_API_DELAY, symbol=self.TEST_SYMBOL
         )
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.prod_env
     def test_08_primaryexchange_by_symbol(self, api_client):
@@ -137,30 +137,28 @@ class TestRestApi:
         result = self.api_call_with_rate_limit(
             api_client.primaryexchange_by_symbol, self.OTHER_API_DELAY, symbol=self.TEST_SYMBOL_SIMPLE
         )
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.prod_env
     def test_09_apisoftlimit(self, api_client):
         """Test API soft limit API"""
         result = self.api_call_with_rate_limit(api_client.apisoftlimit, self.OTHER_API_DELAY)
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.prod_env
     def test_10_exchange_by_symbol(self, api_client):
         """Test exchange information API"""
         result = self.api_call_with_rate_limit(api_client.exchange_by_symbol, self.OTHER_API_DELAY, symbol="usdjpy")
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
-    @pytest.mark.test_env
     @pytest.mark.prod_env
     def test_11_symbolname_future(self, api_client):
         """Test future symbol name API"""
         result = self.api_call_with_rate_limit(
             api_client.symbolname_future, self.OTHER_API_DELAY, future_code="NK225", deriv_month=202503
         )
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
-    @pytest.mark.test_env
     @pytest.mark.prod_env
     def test_12_symbolname_option(self, api_client):
         """Test option symbol name API"""
@@ -172,9 +170,8 @@ class TestRestApi:
             put_or_call="C",
             strike_price=40000,
         )
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
-    @pytest.mark.test_env
     @pytest.mark.prod_env
     def test_13_symbolname_minioptionweekly(self, api_client):
         """Test mini option weekly symbol name API"""
@@ -186,14 +183,14 @@ class TestRestApi:
             put_or_call="C",
             strike_price=40000,
         )
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     # Trading Margin API tests (10 req/sec)
     @pytest.mark.prod_env
     def test_14_wallet_cash(self, api_client):
         """Test cash wallet API"""
         result = self.api_call_with_rate_limit(api_client.wallet_cash, self.OTHER_API_DELAY)
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.prod_env
     def test_15_wallet_cash_by_symbol(self, api_client):
@@ -201,13 +198,13 @@ class TestRestApi:
         result = self.api_call_with_rate_limit(
             api_client.wallet_cash_by_symbol, self.OTHER_API_DELAY, symbol=self.TEST_SYMBOL
         )
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.prod_env
     def test_16_wallet_margin(self, api_client):
         """Test margin wallet API"""
         result = self.api_call_with_rate_limit(api_client.wallet_margin, self.OTHER_API_DELAY)
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.prod_env
     def test_17_wallet_margin_by_symbol(self, api_client):
@@ -215,13 +212,13 @@ class TestRestApi:
         result = self.api_call_with_rate_limit(
             api_client.wallet_margin_by_symbol, self.OTHER_API_DELAY, symbol=self.TEST_SYMBOL
         )
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.prod_env
     def test_18_wallet_future(self, api_client):
         """Test future wallet API"""
         result = self.api_call_with_rate_limit(api_client.wallet_future, self.OTHER_API_DELAY)
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.prod_env
     def test_19_wallet_future_by_symbol(self, api_client):
@@ -229,13 +226,13 @@ class TestRestApi:
         result = self.api_call_with_rate_limit(
             api_client.wallet_future_by_symbol, self.OTHER_API_DELAY, symbol="NK225mini"
         )
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.prod_env
     def test_20_wallet_option(self, api_client):
         """Test option wallet API"""
         result = self.api_call_with_rate_limit(api_client.wallet_option, self.OTHER_API_DELAY)
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.prod_env
     def test_21_wallet_option_by_symbol(self, api_client):
@@ -243,7 +240,7 @@ class TestRestApi:
         result = self.api_call_with_rate_limit(
             api_client.wallet_option_by_symbol, self.OTHER_API_DELAY, symbol="NK225op"
         )
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.prod_env
     def test_22_margin_marginpremium_by_symbol(self, api_client):
@@ -251,7 +248,7 @@ class TestRestApi:
         result = self.api_call_with_rate_limit(
             api_client.margin_marginpremium_by_symbol, self.OTHER_API_DELAY, symbol=self.TEST_SYMBOL
         )
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     # Symbol Registration API tests (10 req/sec)
     @pytest.mark.test_env
@@ -261,7 +258,7 @@ class TestRestApi:
         result = self.api_call_with_rate_limit(
             api_client.register, self.OTHER_API_DELAY, symbols=[{"Symbol": self.TEST_SYMBOL_SIMPLE, "Exchange": 1}]
         )
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.test_env
     @pytest.mark.prod_env
@@ -270,14 +267,14 @@ class TestRestApi:
         result = self.api_call_with_rate_limit(
             api_client.unregister, self.OTHER_API_DELAY, symbols=[{"Symbol": self.TEST_SYMBOL_SIMPLE, "Exchange": 1}]
         )
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     @pytest.mark.test_env
     @pytest.mark.prod_env
     def test_25_unregister_all(self, api_client):
         """Test unregister all symbols API"""
         result = self.api_call_with_rate_limit(api_client.unregister_all, self.OTHER_API_DELAY)
-        assert result is not None
+        assert result.api_result_category == ApiResultCategory.SUCCESS
 
     # Order APIs are skipped in production testing
     @pytest.mark.skip(reason="Order APIs skipped in production testing to prevent accidental trades")
