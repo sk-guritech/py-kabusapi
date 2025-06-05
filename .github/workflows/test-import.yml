@@ -30,6 +30,4 @@ jobs:
       run: python tests/test_import.py
     
     - name: Run pytest
-      run: |
-        pip install pytest
-        pytest tests/ -v -m "not api_integration"
+      run: pytest tests/ -v -m "not api_integration"

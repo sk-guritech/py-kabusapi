@@ -10,7 +10,8 @@ dependencies = [
     "requests",
     "ipython",
     "ruff",
-    "pydantic"
+    "pydantic",
+    "pytest"
 ]
 
 [tool.ruff]
