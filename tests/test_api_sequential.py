@@ -38,7 +38,7 @@ class TestSequentialApi:
         api = KabuStationAPI(host_name=host_name, environment=environment, is_in_docker_container=is_docker)
 
         # Authenticate
-        api_password = os.getenv("KABUS_PASSWORD", "testpassword")
+        api_password = os.getenv("KABUS_PASSWORD", "CHANGE_ME_FOR_TESTING")
         token_response = api.token(api_password)
 
         assert hasattr(token_response, "api_result_category")
@@ -62,7 +62,7 @@ class TestSequentialApi:
 
         api = KabuStationAPI(host_name=host_name, environment=environment, is_in_docker_container=is_docker)
 
-        api_password = os.getenv("KABUS_PASSWORD", "testpassword")
+        api_password = os.getenv("KABUS_PASSWORD", "CHANGE_ME_FOR_TESTING")
         token_response = api.token(api_password)
 
         assert hasattr(token_response, "api_result_category")
