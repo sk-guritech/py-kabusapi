@@ -7,13 +7,13 @@ import sys
 def test_import():
     """Test importing the package."""
     try:
-        from py_kabusapi import KabuStationAPI
+        from py_kabusapi import KabuStationAPI  # noqa: F401
 
         print(f"✓ Python {sys.version.split()[0]}: Import successful")
-        return True
+        assert True
     except ImportError as e:
         print(f"✗ Python {sys.version.split()[0]}: Import failed - {e}")
-        return False
+        assert False, f"Import failed: {e}"
 
 
 if __name__ == "__main__":
