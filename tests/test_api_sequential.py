@@ -15,6 +15,7 @@ from py_kabusapi import KabuStationAPI
 from py_kabusapi.const import ApiResultCategory
 
 
+@pytest.mark.api_integration
 class TestSequentialApi:
     """Tests all py-kabusapi APIs sequentially with proper rate limiting"""
 

@@ -38,4 +38,5 @@ markers = [
     "production: tests for production environment",
     "order_api: tests for order APIs (potentially dangerous)",
     "slow: tests that take longer than usual",
+    "api_integration: tests that require actual API connection",
 ]
