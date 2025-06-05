@@ -34,7 +34,11 @@ class TestRestApi:
     @pytest.fixture(scope="class")
     def api_client(self):
         """Create and authenticate API client"""
-        host_name = os.getenv("KABUS_HOST", "localhost")
+        host_name = (
+            "host.docker.internal"
+            if os.getenv("KABUS_DOCKER", "true") == "true"
+            else os.getenv("KABUS_HOST", "localhost")
+        )
         env_str = os.getenv("KABUS_ENV", "production")
         environment: Literal["test", "production"] = "production" if env_str == "production" else "test"
         is_docker = os.getenv("KABUS_DOCKER", "true").lower() == "true"
@@ -333,7 +337,7 @@ class TestPushApi:
     def test_websocket_connection_without_token(self):
         """Test WebSocket connection without authentication token"""
         api = KabuStationAPI()
-        
+
         with pytest.raises(ValueError, match="API token is not set"):
             api.start_websocket()
 
@@ -345,19 +349,19 @@ class TestPushApi:
         assert not api_client.is_websocket_connected()
 
         # Mock WebSocket for testing
-        with patch('websocket.WebSocketApp') as mock_ws_app:
+        with patch("websocket.WebSocketApp") as mock_ws_app:
             mock_ws_instance = Mock()
             mock_ws_app.return_value = mock_ws_instance
-            
+
             # Mock thread
-            with patch('threading.Thread') as mock_thread:
+            with patch("threading.Thread") as mock_thread:
                 mock_thread_instance = Mock()
                 mock_thread_instance.is_alive.return_value = True
                 mock_thread.return_value = mock_thread_instance
 
                 # Start WebSocket
                 api_client.start_websocket()
-                
+
                 # Should be connected (mocked)
                 assert api_client.ws is not None
                 assert api_client.ws_thread is not None
@@ -368,7 +372,7 @@ class TestPushApi:
 
                 # Stop WebSocket
                 api_client.stop_websocket()
-                
+
                 # Should be disconnected
                 assert api_client.ws is None
                 assert api_client.ws_thread is None
@@ -399,21 +403,18 @@ class TestPushApi:
         def on_disconnect():
             disconnected.set()
 
-        with patch('websocket.WebSocketApp') as mock_ws_app:
+        with patch("websocket.WebSocketApp") as mock_ws_app:
             mock_ws_instance = Mock()
             mock_ws_app.return_value = mock_ws_instance
-            
-            with patch('threading.Thread') as mock_thread:
+
+            with patch("threading.Thread") as mock_thread:
                 mock_thread_instance = Mock()
                 mock_thread_instance.is_alive.return_value = True
                 mock_thread.return_value = mock_thread_instance
 
                 # Start WebSocket with callbacks
                 api_client.start_websocket(
-                    on_message=on_message,
-                    on_error=on_error,
-                    on_connect=on_connect,
-                    on_disconnect=on_disconnect
+                    on_message=on_message, on_error=on_error, on_connect=on_connect, on_disconnect=on_disconnect
                 )
 
                 # Verify callbacks are set
@@ -429,11 +430,11 @@ class TestPushApi:
                     "Exchange": 1,
                     "ExchangeName": "東証プライム",
                     "CurrentPrice": 5000.0,
-                    "CurrentPriceTime": "2025-01-06T09:00:00+09:00"
+                    "CurrentPriceTime": "2025-01-06T09:00:00+09:00",
                 }
 
                 # Get the on_message callback that was passed to WebSocketApp
-                ws_on_message = mock_ws_app.call_args[1]['on_message']
+                ws_on_message = mock_ws_app.call_args[1]["on_message"]
                 ws_on_message(mock_ws_instance, json.dumps(test_message))
 
                 # Wait a bit for callback processing
@@ -457,11 +458,11 @@ class TestPushApi:
             received_errors.append(error)
             error_occurred.set()
 
-        with patch('websocket.WebSocketApp') as mock_ws_app:
+        with patch("websocket.WebSocketApp") as mock_ws_app:
             mock_ws_instance = Mock()
             mock_ws_app.return_value = mock_ws_instance
-            
-            with patch('threading.Thread') as mock_thread:
+
+            with patch("threading.Thread") as mock_thread:
                 mock_thread_instance = Mock()
                 mock_thread_instance.is_alive.return_value = True
                 mock_thread.return_value = mock_thread_instance
@@ -469,7 +470,7 @@ class TestPushApi:
                 api_client.start_websocket(on_error=on_error)
 
                 # Simulate invalid JSON message
-                ws_on_message = mock_ws_app.call_args[1]['on_message']
+                ws_on_message = mock_ws_app.call_args[1]["on_message"]
                 ws_on_message(mock_ws_instance, "invalid json")
 
                 # Wait a bit for error processing
@@ -484,11 +485,11 @@ class TestPushApi:
     @pytest.mark.prod_env
     def test_send_websocket_message(self, api_client):
         """Test sending messages via WebSocket"""
-        with patch('websocket.WebSocketApp') as mock_ws_app:
+        with patch("websocket.WebSocketApp") as mock_ws_app:
             mock_ws_instance = Mock()
             mock_ws_app.return_value = mock_ws_instance
-            
-            with patch('threading.Thread') as mock_thread:
+
+            with patch("threading.Thread") as mock_thread:
                 mock_thread_instance = Mock()
                 mock_thread_instance.is_alive.return_value = True
                 mock_thread.return_value = mock_thread_instance
@@ -515,8 +516,8 @@ class TestPushApi:
     @pytest.mark.prod_env
     def test_websocket_headers(self, api_client):
         """Test WebSocket headers are properly set"""
-        with patch('websocket.WebSocketApp') as mock_ws_app:
-            with patch('threading.Thread') as mock_thread:
+        with patch("websocket.WebSocketApp") as mock_ws_app:
+            with patch("threading.Thread") as mock_thread:
                 mock_thread_instance = Mock()
                 mock_thread_instance.is_alive.return_value = True
                 mock_thread.return_value = mock_thread_instance
@@ -525,10 +526,10 @@ class TestPushApi:
 
                 # Verify WebSocketApp was called with correct headers
                 call_args = mock_ws_app.call_args
-                headers = call_args[1]['header']
-                
-                assert 'X-API-KEY' in headers
-                assert headers['X-API-KEY'] == api_client.x_api_key
+                headers = call_args[1]["header"]
+
+                assert "X-API-KEY" in headers
+                assert headers["X-API-KEY"] == api_client.x_api_key
 
                 api_client.stop_websocket()
 
@@ -539,16 +540,16 @@ class TestPushApi:
         host_name = os.getenv("KABUS_HOST", "localhost")
         env_str = os.getenv("KABUS_ENV", "production")
         environment: Literal["test", "production"] = "production" if env_str == "production" else "test"
-        
+
         api = KabuStationAPI(host_name=host_name, environment=environment, is_in_docker_container=True)
-        
+
         # Authenticate
         api_password = os.getenv("KABUS_PASSWORD", "CHANGE_ME_FOR_TESTING")
         token_response = api.token(api_password)
         assert token_response.api_result_category == ApiResultCategory.SUCCESS
 
-        with patch('websocket.WebSocketApp') as mock_ws_app:
-            with patch('threading.Thread') as mock_thread:
+        with patch("websocket.WebSocketApp") as mock_ws_app:
+            with patch("threading.Thread") as mock_thread:
                 mock_thread_instance = Mock()
                 mock_thread_instance.is_alive.return_value = True
                 mock_thread.return_value = mock_thread_instance
@@ -557,11 +558,11 @@ class TestPushApi:
 
                 # Verify WebSocketApp was called with Docker headers
                 call_args = mock_ws_app.call_args
-                headers = call_args[1]['header']
-                
-                assert 'X-API-KEY' in headers
-                assert 'Host' in headers
-                assert headers['Host'] == 'localhost'
+                headers = call_args[1]["header"]
+
+                assert "X-API-KEY" in headers
+                assert "Host" in headers
+                assert headers["Host"] == "localhost"
 
                 api.stop_websocket()
 
@@ -593,11 +594,7 @@ class TestPushApi:
             assert register_result.api_result_category == ApiResultCategory.SUCCESS
 
             # Start WebSocket
-            api_client.start_websocket(
-                on_message=on_message,
-                on_connect=on_connect,
-                on_error=on_error
-            )
+            api_client.start_websocket(on_message=on_message, on_connect=on_connect, on_error=on_error)
 
             # Wait for connection
             connection_established.wait(timeout=10)
@@ -632,11 +629,11 @@ class TestWebSocketPushData:
             "Exchange": 1,
             "ExchangeName": "東証プライム",
             "CurrentPrice": 5000.0,
-            "CurrentPriceTime": "2025-01-06T09:00:00+09:00"
+            "CurrentPriceTime": "2025-01-06T09:00:00+09:00",
         }
 
         push_data = WebSocketPushData(**data)
-        
+
         assert push_data.Symbol == "9433@1"
         assert push_data.SymbolName == "ＫＤＤＩ"
         assert push_data.Exchange == 1
