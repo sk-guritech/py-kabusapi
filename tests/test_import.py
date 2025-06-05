@@ -11,9 +11,11 @@ def test_import():
 
         print(f"✓ Python {sys.version.split()[0]}: Import successful")
         assert True
+        return True
     except ImportError as e:
         print(f"✗ Python {sys.version.split()[0]}: Import failed - {e}")
         assert False, f"Import failed: {e}"
+        return False
 
 
 if __name__ == "__main__":
