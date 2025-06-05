@@ -73,61 +73,7 @@ cash_info = api.wallet_cash()
 
 ## テスト
 
-### テスト実行方法
-
-#### 基本テスト（推奨）
-```bash
-# インポートテストのみ実行（API接続不要）
-pytest tests/ -v -m "not api_integration"
-```
-
-#### 包括的API統合テスト
-```bash
-# 環境変数を設定
-export KABUS_HOST=localhost
-export KABUS_ENV=production
-export KABUS_DOCKER=true
-export KABUS_PASSWORD=your_api_password
-
-# API統合テストを実行（25のAPIエンドポイントをテスト）
-pytest tests/ -v -m "api_integration"
-```
-
-⚠️ **セキュリティ注意事項:**
-- **本番用パスワードをテストに使用しない**でください
-- テスト専用のAPIパスワードを設定することを強く推奨します
-- パスワードをソースコードやログに含めないよう注意してください
-
-#### 全テスト実行
-```bash
-# 全てのテストを実行
-pytest tests/ -v
-```
-
-### テスト種別
-
-#### インポートテスト
-- パッケージのインポート可能性をテスト
-- CI/CDで自動実行
-- API接続不要
-
-#### API統合テスト
-- 25のAPIエンドポイントを包括的にテスト
-- 適切なレート制限を実装（発注API: 5件/秒、その他: 10件/秒）
-- production環境では発注APIを自動スキップ
-- 実際のkabuステーション接続が必要
-
-### 要件
-
-API統合テストの実行には以下が必要です：
-- kabuステーションの起動（localhost:18080 for production / localhost:18081 for test）
-- 有効なAPIパスワード
-
-詳細な情報は [tests/README_API_TESTS.md](./tests/README_API_TESTS.md) を参照してください。
-
-### CI/CD
-
-GitHub Actionsで自動的にPython 3.10, 3.11, 3.12でのインポートテストが実行されます（API統合テストは除外）。
+テスト実行方法、環境設定、トラブルシューティングについては **[tests/README_TESTS.md](./tests/README_TESTS.md)** を参照してください。
 
 ## 関連リンク
 
