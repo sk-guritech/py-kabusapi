@@ -511,7 +511,7 @@ class ApisoftlimitApiResponse(BaseModel):
 
     Option: float  # オプションのワンショット上限 (枚)
     MiniOption: float  # ミニオプションのワンショット上限 (枚)
-    kabu_s_version: str  # kabuステーションのバージョン
+    kabuSVersion: str  # kabuステーションのバージョン
 
 
 # /margin/marginpremium/{symbol}
