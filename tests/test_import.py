@@ -8,7 +8,7 @@ def test_import():
     """Test importing the package."""
     try:
         from py_kabusapi import KabuStationAPI
-        
+
         # インポートをテストするため、クラスが存在することを確認
         assert KabuStationAPI is not None
 
