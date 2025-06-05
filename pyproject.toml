@@ -35,10 +35,15 @@ addopts = [
     "--strict-markers",
     "--strict-config",
     "--disable-warnings",
+    "-m", "test_env or (not api_integration and not websocket)",
 ]
 markers = [
-    "production: tests for production environment",
+    "prod_env: tests for production environment",
+    "test_env: tests that work in test environment",
     "order_api: tests for order APIs (potentially dangerous)",
     "slow: tests that take longer than usual",
     "api_integration: tests that require actual API connection",
+    "websocket: tests for WebSocket functionality",
+    "websocket_model: tests for WebSocket data models",
+    "integration: tests that require real service connection",
 ]

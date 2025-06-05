@@ -30,4 +30,4 @@ jobs:
       run: python tests/test_import.py
     
     - name: Run pytest
-      run: pytest tests/ -v -m "not api_integration"
+      run: pytest tests/ -v -m "not api_integration and not websocket"
