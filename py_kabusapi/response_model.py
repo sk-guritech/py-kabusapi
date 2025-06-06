@@ -40,19 +40,19 @@ class TokenApiResponse(BaseModel):
 # /sendorder
 class SendorderApiResponse(BaseModel):
     Result: int  # 結果コード
-    OrderId: str  # 受付注文番号
+    OrderId: Optional[str] = None  # 受付注文番号（テスト環境ではnullの場合あり）
 
 
 # /sendorder/future
 class SendorderFutureApiResponse(BaseModel):
     Result: int  # 結果コード
-    OrderId: str  # 受付注文番号
+    OrderId: Optional[str] = None  # 受付注文番号（テスト環境ではnullの場合あり）
 
 
 # /sendorder/option
 class SendorderOptionApiResponse(BaseModel):
     Result: int  # 結果コード
-    OrderId: str  # 受付注文番号
+    OrderId: Optional[str] = None  # 受付注文番号（テスト環境ではnullの場合あり）
 
 
 # /cancelorder
