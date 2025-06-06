@@ -4,18 +4,15 @@ Python wrapper for kabuステーション API
 
 ## インストール
 
+### pypiからインストール
+```bash
+pip install py-kabusapi
+```
+
 ### GitHubから直接インストール
 
 ```bash
 pip install git+https://github.com/sk-guritech/py-kabusapi.git
-```
-
-### ローカルでの開発用インストール
-
-```bash
-git clone https://github.com/sk-guritech/py-kabusapi.git
-cd py-kabusapi
-pip install -e .
 ```
 
 ## 使い方

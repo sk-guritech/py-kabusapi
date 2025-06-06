@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="py-kabusapi",
-    version="0.0.0",
+    version="1.0.0",
     description="Python wrapper for kabuステーション API",
     author="Sakaguchi Ryo",
     author_email="sakaguchi@sk-techfirm.com",
