@@ -78,7 +78,7 @@ cash_info = api.wallet_cash()
 ## 関連リンク
 
 - **[📚 詳細ドキュメント](./docs/)** - 使い方の詳細ガイド
-- **[🔗 kabuステーション API仕様](https://kabucom.github.io/kabusapi/)** - 公式API仕様書
+- **[🔗 kabuステーション API仕様](https://kabucom.github.io/kabusapi/ptal/index.html)** - 公式API仕様書
 
 ## ライセンス
 

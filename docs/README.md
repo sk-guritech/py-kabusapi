@@ -47,7 +47,7 @@ if response.api_result_category == "SUCCESS":
 ## 📖 関連リンク
 
 - [プロジェクトREADME](../README.md) - インストール方法とテスト実行手順
-- [kabuステーション API仕様](https://kabucom.github.io/kabusapi/) - 公式API仕様書
+- [kabuステーション API仕様](https://kabucom.github.io/kabusapi/ptal/index.html) - 公式API仕様書
 
 ---
 
