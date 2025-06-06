@@ -73,7 +73,7 @@ cash_info = api.wallet_cash()
 
 ## テスト
 
-テスト実行方法、環境設定、トラブルシューティングについては **[tests/README_TESTS.md](./tests/README_TESTS.md)** を参照してください。
+テスト実行方法については **[tests/README_TESTS.md](./tests/README_TESTS.md)** を参照してください。
 
 ## 関連リンク
 
