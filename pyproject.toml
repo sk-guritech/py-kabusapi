@@ -1,6 +1,6 @@
 [project]
 name = "py-kabusapi"
-version = "0.0.0"
+version = "1.0.0"
 description = "Python wrapper for kabuステーション API"
 authors = [{name = "Sakaguchi Ryo", email = "sakaguchi@sk-techfirm.com"}]
 readme = "README.md"
@@ -46,4 +46,10 @@ markers = [
     "websocket: tests for WebSocket functionality",
     "websocket_model: tests for WebSocket data models",
     "integration: tests that require real service connection",
+]
+
+[dependency-groups]
+dev = [
+    "build>=1.2.2.post1",
+    "twine>=6.1.0",
 ]
