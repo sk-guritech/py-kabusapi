@@ -15,46 +15,51 @@ py-kabusapiでは、WebSocketを含む包括的なAPIテストを提供してい
 # 基本テストのみ（3個）
 $ pytest -m "not api_integration and not websocket"
 
-# WebSocketテストのみ（9個）
+# WebSocketテストのみ（10個）
 $ KABUS_PASSWORD="password" KABUS_ENV="test" KABUS_DOCKER="true" pytest -m websocket -v
 
-# test環境で利用可能なテストのみ（21個）
+# test環境で利用可能なテストのみ（22個）
 $ KABUS_PASSWORD="password" KABUS_ENV="test"  KABUS_DOCKER="true" pytest -m test_env -v
 
-# production環境で利用可能なテストのみ(36個)
-$ KABUS_PASSWORD="testpassword" KABUS_ENV="production"  KABUS_DOCKER="true" pytest -m "prod_env"
+# production環境で利用可能なテストのみ(18個)
+$ KABUS_PASSWORD="password" KABUS_ENV="production"  KABUS_DOCKER="true" pytest -m prod_env -v
 ```
 
 ## テスト種別詳細
 
 ### 基本テスト（API接続不要）
-- **WebSocketデータモデルテスト** - WebSocketPushDataの型安全性確認
 - **インポートテスト** - パッケージの正常インポート確認
+- **WebSocketデータモデルテスト** - WebSocketPushDataの型安全性確認（2個）
 
 ### API統合テスト（kabuステーション接続必要）
 
 #### 認証API（1個）
 - トークン取得・管理
 
-#### 情報取得API（22個）
+#### 情報取得API（21個）
 - 板情報、銘柄情報、注文一覧、残高一覧
-- ランキング、規制情報、先物・オプション銘柄名取得
-- ウォレット情報（現物・信用・先物・オプション）
-- 為替情報、API制限情報
+- ランキング、規制情報、プライマリー取引所情報
+- 先物・オプション銘柄名取得（3個）
+- ウォレット情報（現物・信用・先物・オプション）（8個）
+- 為替情報、API制限情報、証拠金率情報
 
 #### 銘柄登録API（3個）
 - PUSH配信用銘柄の登録・解除
 - 全銘柄解除
 
-#### WebSocketテスト（9個 + 1個スキップ）
+#### 注文API（4個）
+- 現物注文送信
+- 先物注文送信
+- オプション注文送信
+- 注文取消（スキップ）
+
+#### WebSocketテスト（11個、うち1個スキップ）
 - 接続状態管理、コールバック機能
 - エラーハンドリング、メッセージ送信
 - ヘッダー設定（通常環境・Docker環境）
+- URL生成、トークンなし接続テスト
 - リアルタイム市場データ受信機能
 - 実際の接続テスト（時間依存のため通常スキップ）
-
-#### データモデルテスト（2個）
-- WebSocketPushDataの型安全性確認
 
 ## テストマーカー
 
