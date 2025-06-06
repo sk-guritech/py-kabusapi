@@ -65,5 +65,5 @@ try:
     if response.api_result_category != "SUCCESS":
         print(f"認証失敗: {response.content}")
 except Exception as e:
-    print(f"認証エラー: {e}")
+    print(f"リクエストエラー: {e}")
 ```
